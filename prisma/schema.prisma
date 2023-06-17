@@ -1,0 +1,53 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  surname       String?
+  email         String?
+  phone         String?
+  age           Int?
+  course        String?
+  course_format String?
+  course_type   String?
+  sum           Int?
+  already_paid  Int?
+  created_at    DateTime?
+  utm           String?
+  msg           String?
+  status        String?
+  manager       String?
+  group         String?
+  comments      Comment[]
+
+  @@map(name: "orders")
+}
+
+model Admin {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  surname  String
+  email    String
+  password String
+
+  @@map(name: "admins")
+}
+
+model Comment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  text       String
+  author     String
+  Order      Order?   @relation(fields: [orderId], references: [id])
+  orderId    String?  @db.ObjectId
+  created_at DateTime
+
+  @@map(name: "comments")
+}
