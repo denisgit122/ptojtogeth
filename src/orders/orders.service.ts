@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Group, Order } from '@prisma/client';
+import { Comment, Group, Order } from '@prisma/client';
 import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { UpdateOrdersDto } from './dto';
@@ -192,5 +192,11 @@ export class OrdersService {
     }
 
     return group;
+  }
+
+  async getCommentsFromOrderById(orderId: string): Promise<Comment[]> {
+    return this.prismaService.comment.findMany({
+      where: { orderId },
+    });
   }
 }

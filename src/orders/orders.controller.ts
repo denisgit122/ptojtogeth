@@ -118,4 +118,18 @@ export class OrdersController {
       .status(HttpStatus.OK)
       .json(await this.ordersService.addComment(orderId, body, user));
   }
+
+  @ApiParam({ name: 'orderId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get(':orderId/comments')
+  async getCommentsFromOrderById(
+    @Req() req: any,
+    @Res() res: any,
+    @Param('orderId') orderId: string,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.ordersService.getCommentsFromOrderById(orderId));
+  }
 }
