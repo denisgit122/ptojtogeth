@@ -9,24 +9,25 @@ datasource db {
 }
 
 model Order {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  surname       String?
-  email         String?
-  phone         String?
-  age           Int?
-  course        String?
-  course_format String?
-  course_type   String?
-  sum           Int?
-  already_paid  Int?
-  created_at    DateTime?
-  utm           String?
-  msg           String?
-  status        String?
-  manager       String?
-  group         String?
-  comments      Comment[]
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String?
+  surname              String?
+  email                String?
+  phone                String?
+  age                  Int?
+  course               String?
+  course_format        String?
+  course_type          String?
+  sum                  Int?
+  already_paid         Int?
+  created_at           DateTime?
+  utm                  String?
+  msg                  String?
+  status               String?
+  manager              String?
+  groupFromProgramming Group?    @relation(fields: [group], references: [name])
+  group                String?
+  comments             Comment[]
 
   @@map(name: "orders")
 }
@@ -50,4 +51,12 @@ model Comment {
   created_at DateTime
 
   @@map(name: "comments")
+}
+
+model Group {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String  @unique
+  Order Order[]
+
+  @@map(name: "groups")
 }

@@ -1,22 +1,29 @@
-import { ApiBearerAuth, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
   Get,
-  Headers,
   HttpStatus,
   Param,
-  Patch, Post,
+  Patch,
+  Post,
   Req,
   Res,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { UpdateOrdersDto } from './dto';
+import { AddCommentDto, UpdateOrdersDto } from './dto';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
 import { IComment } from './interface';
-import { User } from "../auth/user.decorator";
+import { User } from '../auth/user.decorator';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -44,14 +51,14 @@ export class OrdersController {
   })
   @ApiQuery({
     name: 'sortBy',
-    example: 'name:DESC',
+    example: 'name:desc',
     type: String,
     required: false,
     description: 'Sort by column and order',
   })
   @ApiQuery({
-    name: 'filter',
-    example: ['filter.name=ax', 'filter.age=25'],
+    name: 'filter.name',
+    example: 'ax',
     type: String,
     required: false,
     description: 'Filter by value',
@@ -67,6 +74,8 @@ export class OrdersController {
   }
 
   @ApiParam({ name: 'orderId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   @Get(':orderId')
   async getOrderById(
     @Req() req: any,
@@ -79,6 +88,8 @@ export class OrdersController {
   }
 
   @ApiParam({ name: 'orderId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   @Patch(':orderId')
   async editOrder(
     @Req() req: any,
@@ -92,6 +103,9 @@ export class OrdersController {
   }
 
   @ApiParam({ name: 'orderId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: AddCommentDto })
   @Post(':orderId/comment')
   async addComment(
     @Req() req: any,

@@ -1,26 +1,19 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Order } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import { Group, Order } from '@prisma/client';
 import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { UpdateOrdersDto } from './dto';
 import { OrdersEntity } from './orders.entity';
 import { EStatus, IComment, ICustomPaginated } from './interface';
-import { JwtService } from '@nestjs/jwt';
-import { AdminService } from '../admin';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class OrdersService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly adminService: AdminService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getOrdersList(
     query: PaginateQuery,
   ): Promise<ICustomPaginated<OrdersEntity>> {
-    const { page = 1, limit = 25, sortBy = [['id', 'DESC']], filter } = query;
+    const { page = 1, limit = 25, sortBy = [['id', 'desc']], filter } = query;
 
     const skip = (page - 1) * limit;
     const take = limit;
@@ -67,7 +60,8 @@ export class OrdersService {
           key === 'course' ||
           key === 'course_type' ||
           key === 'course_format' ||
-          key === 'status'
+          key === 'status' ||
+          key === 'group'
         ) {
           where[key] = { equals: value };
         }
@@ -117,6 +111,17 @@ export class OrdersService {
     const order = await this.getOrderById(orderId);
 
     if (order.manager === null) {
+      if (orderData.group) {
+        const group = await this.checkGroup(orderData.group);
+
+        return this.prismaService.order.update({
+          where: { id: orderId },
+          data: {
+            group: group.name,
+          },
+        });
+      }
+
       return this.prismaService.order.update({
         where: { id: orderId },
         data: {
@@ -131,7 +136,6 @@ export class OrdersService {
           status: orderData.status,
           sum: orderData.sum,
           already_paid: orderData.already_paid,
-          group: orderData.group,
           manager: orderData.manager,
         },
       });
@@ -172,5 +176,21 @@ export class OrdersService {
     }
 
     return order;
+  }
+
+  async checkGroup(groupName: string): Promise<Group> {
+    const group = await this.prismaService.group.findFirst({
+      where: { name: groupName },
+    });
+
+    if (!group) {
+      return this.prismaService.group.create({
+        data: {
+          name: groupName,
+        },
+      });
+    }
+
+    return group;
   }
 }

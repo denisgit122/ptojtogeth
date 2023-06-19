@@ -15,7 +15,7 @@ import { ECourse, ECourse_format, ECourse_type, EStatus } from '../interface';
 export class UpdateOrdersDto {
   @ApiProperty({ example: 'Max' })
   @IsOptional()
-  @Length(5, 25)
+  @Length(2, 25)
   @IsString()
   name?: string;
 
@@ -91,4 +91,12 @@ export class UpdateOrdersDto {
   @Length(5, 25)
   @IsString()
   manager?: string;
+}
+
+export class AddCommentDto {
+  @ApiProperty({ example: 'Hello World!' })
+  @IsOptional()
+  @Length(5, 100)
+  @IsString()
+  comment: string;
 }
