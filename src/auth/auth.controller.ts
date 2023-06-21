@@ -6,7 +6,6 @@ import {
   Res,
   UseGuards,
   Req,
-  Header,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto';
