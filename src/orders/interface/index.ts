@@ -5,3 +5,4 @@ export * from './status.enum';
 export * from '../orders.entity';
 export * from './custom.paginated.interface';
 export * from './comment.interface';
+export * from './group.interface';

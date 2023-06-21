@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<string | null> {
+  async login(loginDto: LoginDto) {
     const admin: Admin = await this.adminService.getAdminByIdOrEmail(
       loginDto.email,
     );
@@ -30,7 +30,48 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
-    const payload = { id: admin.id };
-    return this.jwtService.sign(payload);
+    const accessToken = await this.jwtService.sign(
+      { id: admin.id, strategy: 'access' },
+      {
+        expiresIn: '10m',
+        secret: process.env.SECRET_ACCESS_WORD,
+      },
+    );
+
+    const refreshToken = await this.jwtService.sign(
+      { id: admin.id, strategy: 'refresh' },
+      {
+        expiresIn: '20m',
+        secret: process.env.SECRET_REFRESH_WORD,
+      },
+    );
+
+    return {
+      accessToken: `Bearer ${accessToken}`,
+      refreshToken: `Bearer ${refreshToken}`,
+    };
+  }
+
+  async refresh(id: string) {
+    const accessToken = await this.jwtService.sign(
+      { id, strategy: 'access' },
+      {
+        expiresIn: '10m',
+        secret: process.env.SECRET_ACCESS_WORD,
+      },
+    );
+
+    const refreshToken = await this.jwtService.sign(
+      { id, strategy: 'refresh' },
+      {
+        expiresIn: '20m',
+        secret: process.env.SECRET_REFRESH_WORD,
+      },
+    );
+
+    return {
+      accessToken: `Bearer ${accessToken}`,
+      refreshToken: `Bearer ${refreshToken}`,
+    };
   }
 }

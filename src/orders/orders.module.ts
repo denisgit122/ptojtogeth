@@ -12,9 +12,15 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     AdminModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET_KEY,
+      secret: process.env.SECRET_ACCESS_WORD,
       signOptions: {
-        expiresIn: '24h',
+        expiresIn: '10m',
+      },
+    }),
+    JwtModule.register({
+      secret: process.env.SECRET_REFRESH_WORD,
+      signOptions: {
+        expiresIn: '20m',
       },
     }),
   ],

@@ -19,15 +19,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { AddCommentDto, UpdateOrdersDto } from './dto';
+import { AddCommentDto, CreateGroupDto, UpdateOrdersDto } from './dto';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
-import { IComment } from './interface';
+import { IComment, IGroup } from './interface';
 import { User } from '../auth/user.decorator';
 
 @ApiTags('Orders')
 @Controller('orders')
-@UseGuards(AuthGuard('bearer'))
+@UseGuards(AuthGuard('access'))
 @ApiBearerAuth()
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
@@ -131,5 +131,22 @@ export class OrdersController {
     return res
       .status(HttpStatus.OK)
       .json(await this.ordersService.getCommentsFromOrderById(orderId));
+  }
+
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: CreateGroupDto })
+  @Post('create/group')
+  async createGroup(@Req() req: any, @Body() body: IGroup, @Res() res: any) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.ordersService.createGroup(body));
+  }
+
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get('groups')
+  async getGroups(@Req() req: any, @Res() res: any) {
+    return res.status(HttpStatus.OK).json(await this.ordersService.getGroups());
   }
 }

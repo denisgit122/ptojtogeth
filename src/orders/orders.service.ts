@@ -4,7 +4,8 @@ import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { UpdateOrdersDto } from './dto';
 import { OrdersEntity } from './orders.entity';
-import { EStatus, IComment, ICustomPaginated } from './interface';
+import { EStatus, IComment, ICustomPaginated, IGroup } from './interface';
+import * as moment from 'moment';
 
 @Injectable()
 export class OrdersService {
@@ -27,24 +28,23 @@ export class OrdersService {
     const where = {};
     if (filter && Object.keys(filter).length > 0) {
       Object.entries(filter).forEach(([key, value]) => {
+        let startDate;
+        let endDate;
+
         if (key === 'start_date') {
-          if (Array.isArray(value)) {
-            where['$or'] = value.map((dateStr) => ({
-              created_at: { gte: new Date(dateStr) },
-            }));
-          } else {
-            where['created_at'] = { gte: new Date(value) };
-          }
+          startDate = Array.isArray(value) ? moment(value[0]) : moment(value);
+        } else if (key === 'end_date') {
+          endDate = Array.isArray(value) ? moment(value[0]) : moment(value);
         }
 
-        if (key === 'end_date') {
-          if (Array.isArray(value)) {
-            where['$or'] = value.map((dateStr) => ({
-              created_at: { lte: new Date(dateStr) },
-            }));
-          } else {
-            where['created_at'] = { lte: new Date(value) };
-          }
+        if (startDate) {
+          where['created_at'] = where['created_at'] || {};
+          where['created_at'].gte = startDate.toISOString();
+        }
+
+        if (endDate) {
+          where['created_at'] = where['created_at'] || {};
+          where['created_at'].lte = endDate.toISOString();
         }
 
         if (
@@ -53,7 +53,7 @@ export class OrdersService {
           key === 'email' ||
           key === 'phone'
         ) {
-          where[key] = { contains: value };
+          where[key] = { contains: value, mode: 'insensitive' };
         }
 
         if (
@@ -109,17 +109,13 @@ export class OrdersService {
 
   async editOrderById(orderId: string, orderData: UpdateOrdersDto) {
     const order = await this.getOrderById(orderId);
+    console.log(orderData);
 
-    if (order.manager === null) {
+    if (order && order.manager === null) {
+      let group;
+
       if (orderData.group) {
-        const group = await this.checkGroup(orderData.group);
-
-        return this.prismaService.order.update({
-          where: { id: orderId },
-          data: {
-            group: group.name,
-          },
-        });
+        group = await this.checkGroup(orderData.group);
       }
 
       return this.prismaService.order.update({
@@ -135,6 +131,7 @@ export class OrdersService {
           course_format: orderData.course_format,
           status: orderData.status,
           sum: orderData.sum,
+          group: group.name,
           already_paid: orderData.already_paid,
           manager: orderData.manager,
         },
@@ -146,6 +143,7 @@ export class OrdersService {
     const order = await this.checkOrder(orderId);
 
     if (
+      order &&
       order.manager === null &&
       (order.status === EStatus.NEW || order.status === null)
     ) {
@@ -178,17 +176,27 @@ export class OrdersService {
     return order;
   }
 
-  async checkGroup(groupName: string): Promise<Group> {
-    const group = await this.prismaService.group.findFirst({
-      where: { name: groupName },
-    });
+  async createGroup(newGroup: IGroup): Promise<Group> {
+    const group = await this.checkGroup(newGroup.name);
 
     if (!group) {
       return this.prismaService.group.create({
         data: {
-          name: groupName,
+          name: newGroup.name,
         },
       });
+    }
+
+    return group;
+  }
+
+  async checkGroup(nameGroup: string): Promise<Group> {
+    const group = await this.prismaService.group.findFirst({
+      where: { name: nameGroup },
+    });
+
+    if (!group) {
+      return null;
     }
 
     return group;
@@ -198,5 +206,9 @@ export class OrdersService {
     return this.prismaService.comment.findMany({
       where: { orderId },
     });
+  }
+
+  async getGroups(): Promise<Group[]> {
+    return this.prismaService.group.findMany();
   }
 }

@@ -20,7 +20,7 @@ model Order {
   course_type          String?
   sum                  Int?
   already_paid         Int?
-  created_at           DateTime?
+  created_at           String?
   utm                  String?
   msg                  String?
   status               String?

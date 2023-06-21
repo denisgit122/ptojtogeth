@@ -100,3 +100,11 @@ export class AddCommentDto {
   @IsString()
   comment: string;
 }
+
+export class CreateGroupDto {
+  @ApiProperty({ example: 'sept-2022' })
+  @IsOptional()
+  @Length(5, 100)
+  @IsString()
+  name: string;
+}
