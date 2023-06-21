@@ -73,6 +73,13 @@ export class OrdersController {
       .json(await this.ordersService.getOrdersList(query));
   }
 
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get('groups')
+  async getGroups(@Req() req: any, @Res() res: any) {
+    return res.status(HttpStatus.OK).json(await this.ordersService.getGroups());
+  }
+
   @ApiParam({ name: 'orderId', required: true })
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -141,12 +148,5 @@ export class OrdersController {
     return res
       .status(HttpStatus.OK)
       .json(await this.ordersService.createGroup(body));
-  }
-
-  @ApiResponse({ status: 200, description: 'OK' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @Get('groups')
-  async getGroups(@Req() req: any, @Res() res: any) {
-    return res.status(HttpStatus.OK).json(await this.ordersService.getGroups());
   }
 }
