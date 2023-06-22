@@ -45,6 +45,13 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Prisma
+
+```bash
+# updating prisma.schema
+$ npx prisma generate
+```
+
 ## Test
 
 ```bash
