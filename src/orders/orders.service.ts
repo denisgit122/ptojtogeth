@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Comment, Group, Order } from '@prisma/client';
 import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
@@ -61,7 +61,8 @@ export class OrdersService {
           key === 'course_type' ||
           key === 'course_format' ||
           key === 'status' ||
-          key === 'group'
+          key === 'group' ||
+          key === 'manager'
         ) {
           where[key] = { equals: value };
         }
@@ -109,32 +110,35 @@ export class OrdersService {
 
   async editOrderById(orderId: string, orderData: UpdateOrdersDto) {
     const order = await this.getOrderById(orderId);
-    console.log(orderData);
+    let group;
+
+    if (orderData.group) {
+      group = await this.checkGroup(orderData.group);
+    }
 
     if (order && order.manager === null) {
-      let group;
+      const updateData: UpdateOrdersDto = {
+        name: orderData.name,
+        surname: orderData.surname,
+        email: orderData.email,
+        phone: orderData.phone,
+        age: orderData.age,
+        course: orderData.course,
+        course_type: orderData.course_type,
+        course_format: orderData.course_format,
+        status: orderData.status,
+        sum: orderData.sum,
+        already_paid: orderData.already_paid,
+        manager: orderData.manager,
+      };
 
-      if (orderData.group) {
-        group = await this.checkGroup(orderData.group);
+      if (group) {
+        updateData.group = group.name;
       }
 
       return this.prismaService.order.update({
         where: { id: orderId },
-        data: {
-          name: orderData.name,
-          surname: orderData.surname,
-          email: orderData.email,
-          phone: orderData.phone,
-          age: orderData.age,
-          course: orderData.course,
-          course_type: orderData.course_type,
-          course_format: orderData.course_format,
-          status: orderData.status,
-          sum: orderData.sum,
-          group: group.name,
-          already_paid: orderData.already_paid,
-          manager: orderData.manager,
-        },
+        data: updateData,
       });
     }
   }
@@ -163,14 +167,14 @@ export class OrdersService {
         },
       });
     }
-    return null;
+    return new HttpException('You can not add comment', HttpStatus.BAD_REQUEST);
   }
 
   async checkOrder(orderId: string): Promise<Order> {
     const order = await this.getOrderById(orderId);
 
     if (!order) {
-      return null;
+      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
     }
 
     return order;
@@ -196,7 +200,7 @@ export class OrdersService {
     });
 
     if (!group) {
-      return null;
+      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
     }
 
     return group;

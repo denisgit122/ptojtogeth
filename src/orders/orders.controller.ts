@@ -80,6 +80,16 @@ export class OrdersController {
     return res.status(HttpStatus.OK).json(await this.ordersService.getGroups());
   }
 
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: CreateGroupDto })
+  @Post('create/group')
+  async createGroup(@Req() req: any, @Body() body: IGroup, @Res() res: any) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.ordersService.createGroup(body));
+  }
+
   @ApiParam({ name: 'orderId', required: true })
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -138,15 +148,5 @@ export class OrdersController {
     return res
       .status(HttpStatus.OK)
       .json(await this.ordersService.getCommentsFromOrderById(orderId));
-  }
-
-  @ApiResponse({ status: 200, description: 'OK' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiBody({ type: CreateGroupDto })
-  @Post('create/group')
-  async createGroup(@Req() req: any, @Body() body: IGroup, @Res() res: any) {
-    return res
-      .status(HttpStatus.OK)
-      .json(await this.ordersService.createGroup(body));
   }
 }
