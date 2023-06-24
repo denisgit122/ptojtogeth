@@ -11,6 +11,7 @@ import {
   Min,
 } from 'class-validator';
 import { ECourse, ECourse_format, ECourse_type, EStatus } from '../interface';
+import { IsUniqueEmail } from "../../validators/email.validator";
 
 export class UpdateOrdersDto {
   @ApiProperty({ example: 'Max' })
@@ -28,6 +29,7 @@ export class UpdateOrdersDto {
   @ApiProperty({ example: 'max@gmail.com' })
   @IsOptional()
   @IsEmail()
+  @IsUniqueEmail()
   @IsString()
   email?: string;
 

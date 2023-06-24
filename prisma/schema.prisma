@@ -60,3 +60,12 @@ model Group {
 
   @@map(name: "groups")
 }
+
+model Manager {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  surname    String
+  email      String   @unique
+  is_active  Boolean  @default(false)
+  last_login DateTime
+}

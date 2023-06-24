@@ -1,4 +1,4 @@
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import * as process from 'process';
 import { AdminService } from './admin.service';

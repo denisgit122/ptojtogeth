@@ -4,7 +4,13 @@ import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { UpdateOrdersDto } from './dto';
 import { OrdersEntity } from './orders.entity';
-import { EStatus, IComment, ICustomPaginated, IGroup } from './interface';
+import {
+  EStatus,
+  IComment,
+  ICustomPaginated,
+  IGroup,
+  IStatistic,
+} from './interface';
 import * as moment from 'moment';
 
 @Injectable()
@@ -12,7 +18,7 @@ export class OrdersService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getOrdersList(
-    query: PaginateQuery,
+    query?: PaginateQuery,
   ): Promise<ICustomPaginated<OrdersEntity>> {
     const { page = 1, limit = 25, sortBy = [['id', 'desc']], filter } = query;
 
@@ -83,7 +89,7 @@ export class OrdersService {
       });
     }
 
-    const totalCount = await this.prismaService.order.count();
+    const totalCount = await this.countOrders();
     const orders = await this.prismaService.order.findMany({
       skip,
       take,
@@ -105,6 +111,12 @@ export class OrdersService {
   async getOrderById(orderId: string): Promise<Order> {
     return this.prismaService.order.findFirst({
       where: { id: orderId },
+    });
+  }
+
+  async getOrderByEmail(email: string): Promise<Order> {
+    return this.prismaService.order.findFirst({
+      where: { email },
     });
   }
 
@@ -200,7 +212,7 @@ export class OrdersService {
     });
 
     if (!group) {
-      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+      return null;
     }
 
     return group;
@@ -214,5 +226,31 @@ export class OrdersService {
 
   async getGroups(): Promise<Group[]> {
     return this.prismaService.group.findMany();
+  }
+
+  async countOrders(argument?: Partial<OrdersEntity>): Promise<number> {
+    const where: any = argument ? { ...argument } : {};
+
+    return this.prismaService.order.count({ where });
+  }
+
+  async getStatisticOnOrders(): Promise<IStatistic> {
+    const total = await this.countOrders();
+    const inWork = await this.countOrders({ status: EStatus.IN_WORK });
+    const nullOrders = await this.countOrders({ status: null });
+    const agree = await this.countOrders({ status: EStatus.AGREE });
+    const disagree = await this.countOrders({ status: EStatus.DISAGREE });
+    const dubbing = await this.countOrders({ status: EStatus.DUBBING });
+    const newOrders = await this.countOrders({ status: EStatus.NEW });
+
+    return {
+      total,
+      inWork,
+      null: nullOrders,
+      agree,
+      disagree,
+      dubbing,
+      new: newOrders,
+    };
   }
 }

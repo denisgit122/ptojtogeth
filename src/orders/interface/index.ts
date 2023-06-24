@@ -4,5 +4,6 @@ export * from './course_type.enum';
 export * from './status.enum';
 export * from '../orders.entity';
 export * from './custom.paginated.interface';
-export * from './comment.interface';
-export * from './group.interface';
+export * from './comment.type';
+export * from './group.type';
+export * from './statistic.interface';
