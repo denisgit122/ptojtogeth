@@ -1,1 +1,0 @@
-export * from './trim-and-lowercase.pipe';

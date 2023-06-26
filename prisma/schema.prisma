@@ -12,7 +12,7 @@ model Order {
   id                   String    @id @default(auto()) @map("_id") @db.ObjectId
   name                 String?
   surname              String?
-  email                String?
+  email                String?   @unique
   phone                String?
   age                  Int?
   course               String?
@@ -62,10 +62,14 @@ model Group {
 }
 
 model Manager {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   surname    String
-  email      String   @unique
-  is_active  Boolean  @default(false)
-  last_login DateTime
+  email      String    @unique
+  password   String?
+  status     String    @default("unbanned")
+  is_active  Boolean   @default(false)
+  last_login DateTime?
+
+  @@map(name: "managers")
 }

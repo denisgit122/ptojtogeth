@@ -13,6 +13,11 @@ import {
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController, AdminModule, AdminService } from './admin';
 import { PassportModule } from '@nestjs/passport';
+import {
+  ManagersController,
+  ManagersModule,
+  ManagersService,
+} from './managers';
 
 @Module({
   imports: [
@@ -20,6 +25,7 @@ import { PassportModule } from '@nestjs/passport';
     PrismaModule,
     AuthModule,
     PassportModule,
+    ManagersModule,
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_WORD,
       signOptions: {
@@ -39,6 +45,7 @@ import { PassportModule } from '@nestjs/passport';
     OrdersController,
     AuthController,
     AdminController,
+    ManagersController,
   ],
   providers: [
     AppService,
@@ -48,6 +55,7 @@ import { PassportModule } from '@nestjs/passport';
     AdminService,
     AccessStrategy,
     RefreshStrategy,
+    ManagersService,
   ],
 })
 export class AppModule {}

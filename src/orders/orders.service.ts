@@ -155,7 +155,11 @@ export class OrdersService {
     }
   }
 
-  async addComment(orderId: string, data: IComment, user: any) {
+  async addComment(
+    orderId: string,
+    data: IComment,
+    user: any,
+  ): Promise<Comment | HttpException> {
     const order = await this.checkOrder(orderId);
 
     if (

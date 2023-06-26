@@ -1,2 +1,2 @@
 export * from './orm';
-export * from './trim';
+export * from './trim-and-lowercase';

@@ -1,7 +1,7 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 
 @Injectable()
-export class TrimAndLowerCasePipe implements PipeTransform {
+export class TrimPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata): any {
     if (metadata.type === 'body') {
       this.processValues(value);
@@ -20,7 +20,7 @@ export class TrimAndLowerCasePipe implements PipeTransform {
         if (this.isObject(value)) {
           this.processValues(value);
         } else if (typeof value === 'string') {
-          values[key] = value.trim().toLowerCase();
+          values[key] = value.trim();
         }
       }
     });

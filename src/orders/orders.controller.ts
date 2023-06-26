@@ -24,7 +24,7 @@ import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
 import { IComment, IGroup } from './interface';
 import { User } from '../auth/user.decorator';
-import { TrimAndLowerCasePipe } from '../core';
+import { TrimPipe } from '../core';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -96,7 +96,7 @@ export class OrdersController {
   @Post('create/group')
   async createGroup(
     @Req() req: any,
-    @Body(new TrimAndLowerCasePipe()) body: IGroup,
+    @Body(new TrimPipe()) body: IGroup,
     @Res() res: any,
   ) {
     return res
@@ -124,7 +124,7 @@ export class OrdersController {
   @Patch(':orderId')
   async editOrder(
     @Req() req: any,
-    @Body(new TrimAndLowerCasePipe()) body: UpdateOrdersDto,
+    @Body(new TrimPipe()) body: UpdateOrdersDto,
     @Res() res: any,
     @Param('orderId') orderId: string,
   ) {
@@ -140,7 +140,7 @@ export class OrdersController {
   @Post(':orderId/comment')
   async addComment(
     @Req() req: any,
-    @Body(new TrimAndLowerCasePipe()) body: IComment,
+    @Body(new TrimPipe()) body: IComment,
     @Res() res: any,
     @Param('orderId') orderId: string,
     @User() user: any,
