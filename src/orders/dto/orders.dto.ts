@@ -11,7 +11,7 @@ import {
   Min,
 } from 'class-validator';
 import { ECourse, ECourse_format, ECourse_type, EStatus } from '../interface';
-import { IsUniqueEmail } from "../../validators/email.validator";
+import { IsUniqueEmail } from '../../validators/email.validator';
 
 export class UpdateOrdersDto {
   @ApiProperty({ example: 'Max' })
@@ -97,15 +97,13 @@ export class UpdateOrdersDto {
 
 export class AddCommentDto {
   @ApiProperty({ example: 'Hello World!' })
-  @IsOptional()
-  @Length(5, 100)
+  @Length(2, 100)
   @IsString()
   comment: string;
 }
 
 export class CreateGroupDto {
   @ApiProperty({ example: 'sept-2022' })
-  @IsOptional()
   @Length(5, 100)
   @IsString()
   name: string;
