@@ -126,13 +126,15 @@ export class OrdersService {
 
     if (orderData.group) {
       group = await this.checkGroup(orderData.group);
+      if (!group) {
+        throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+      }
     }
 
     if (order && order.manager === null) {
       const updateData: UpdateOrdersDto = {
         name: orderData.name,
         surname: orderData.surname,
-        email: orderData.email,
         phone: orderData.phone,
         age: orderData.age,
         course: orderData.course,
@@ -143,6 +145,20 @@ export class OrdersService {
         already_paid: orderData.already_paid,
         manager: orderData.manager,
       };
+
+      if (orderData.email) {
+        const normalizedEmail = orderData.email.toLowerCase();
+        const email = await this.getOrderByEmail(normalizedEmail);
+
+        if (!email) {
+          updateData.email = normalizedEmail;
+        } else {
+          throw new HttpException(
+            'Email is already in use.',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
 
       if (group) {
         updateData.group = group.name;
