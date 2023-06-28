@@ -6,4 +6,5 @@ export * from '../orders.entity';
 export * from './custom.paginated.interface';
 export * from './comment.type';
 export * from './group.type';
+export * from './email.type';
 export * from './statistic.interface';

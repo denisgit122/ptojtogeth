@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../core';
+import { PasswordService, PrismaService } from '../core';
 import { Admin } from '@prisma/client';
-import * as process from 'process';
 import { isEmail } from 'class-validator';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly passwordService: PasswordService,
+  ) {}
 
   async checkAdminExistence(): Promise<boolean> {
     const adminCount = await this.prismaService.admin.count();
@@ -41,7 +42,7 @@ export class AdminService {
     name: string,
     surname: string,
   ): Promise<Admin> {
-    const passwordHash = await this.hashPassword(password);
+    const passwordHash = await this.passwordService.hashPassword(password);
 
     return this.prismaService.admin.create({
       data: {
@@ -51,11 +52,5 @@ export class AdminService {
         surname,
       },
     });
-  }
-
-  async hashPassword(password: string): Promise<string> {
-    const salt = parseInt(process.env.SALT, 10);
-
-    return bcrypt.hash(password, salt);
   }
 }

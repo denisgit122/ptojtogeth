@@ -19,11 +19,11 @@ import {
 import { ManagersService } from './managers.service';
 import { CreateManagersDto } from './dto';
 import { TrimPipe } from '../core';
-import { AuthGuard } from '@nestjs/passport';
+import { AdminAuthGuard } from '../admin';
 
 @ApiTags('Managers')
 @Controller('managers')
-@UseGuards(AuthGuard('access'))
+@UseGuards(AdminAuthGuard)
 @ApiBearerAuth()
 export class ManagersController {
   constructor(private readonly managersService: ManagersService) {}

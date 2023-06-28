@@ -38,6 +38,7 @@ model Admin {
   surname  String
   email    String
   password String
+  role     String @default("admin")
 
   @@map(name: "admins")
 }
@@ -70,6 +71,7 @@ model Manager {
   status     String    @default("unbanned")
   is_active  Boolean   @default(false)
   last_login DateTime?
+  role       String    @default("manager")
 
   @@map(name: "managers")
 }

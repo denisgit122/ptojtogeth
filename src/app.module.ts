@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrdersModule, OrdersController, OrdersService } from './orders';
-import { PrismaModule, PrismaService } from './core';
+import { MailModule, MailService, PasswordModule, PasswordService, PrismaModule, PrismaService } from "./core";
 import {
   AccessStrategy,
+  ActivateStrategy,
   AuthController,
   AuthModule,
   AuthService,
@@ -26,6 +27,7 @@ import {
     AuthModule,
     PassportModule,
     ManagersModule,
+    PasswordModule,
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_WORD,
       signOptions: {
@@ -38,7 +40,14 @@ import {
         expiresIn: '20m',
       },
     }),
+    JwtModule.register({
+      secret: process.env.SECRET_ACTIVATE_WORD,
+      signOptions: {
+        expiresIn: '7d',
+      },
+    }),
     AdminModule,
+    MailModule,
   ],
   controllers: [
     AppController,
@@ -49,13 +58,16 @@ import {
   ],
   providers: [
     AppService,
-    OrdersService,
     PrismaService,
     AuthService,
     AdminService,
     AccessStrategy,
     RefreshStrategy,
     ManagersService,
+    OrdersService,
+    MailService,
+    PasswordService,
+    ActivateStrategy,
   ],
 })
 export class AppModule {}

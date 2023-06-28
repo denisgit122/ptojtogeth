@@ -1,11 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from '../core';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { PasswordService, PrismaService } from "../core";
 import { Manager } from '@prisma/client';
 import { CreateManagersDto } from './dto';
+import { AuthService } from '../auth';
 
 @Injectable()
 export class ManagersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly passwordService: PasswordService,
+  ) {}
 
   async getManagersList(): Promise<Manager[]> {
     return this.prismaService.manager.findMany();
@@ -19,12 +29,12 @@ export class ManagersService {
 
   async getManagerByEmail(email: string): Promise<Manager> {
     return this.prismaService.manager.findFirst({
-      where: { email },
+      where: { email: email.trim().toLowerCase() },
     });
   }
 
   async createManager(manager: CreateManagersDto): Promise<Manager> {
-    if (await this.getManagerByEmail(manager.email.toLowerCase())) {
+    if (await this.getManagerByEmail(manager.email)) {
       throw new HttpException(
         'Email is already in use.',
         HttpStatus.BAD_REQUEST,
@@ -38,5 +48,26 @@ export class ManagersService {
         },
       });
     }
+  }
+
+  async updateActivateManager(
+    managerId: string,
+    password: string,
+  ): Promise<Manager> {
+    const hash = await this.passwordService.hashPassword(password);
+
+    return this.prismaService.manager.update({
+      where: { id: managerId },
+      data: { password: hash, is_active: true },
+    });
+  }
+
+  async updateLastLoginManager(
+    managerId: string,
+  ): Promise<Manager> {
+    return this.prismaService.manager.update({
+      where: { id: managerId },
+      data: { last_login: new Date},
+    });
   }
 }
