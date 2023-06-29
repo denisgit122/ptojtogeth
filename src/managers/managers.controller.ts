@@ -10,14 +10,14 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Param,
+  Param, Patch,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { ManagersService } from './managers.service';
-import { CreateManagersDto } from './dto';
+import {CreateManagersDto, UpdateManagersDto} from './dto';
 import { TrimPipe } from '../core';
 import { AdminAuthGuard } from '../admin';
 
@@ -62,6 +62,22 @@ export class ManagersController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.managersService.getManagerById(managerId));
+      .json(await this.managersService.getManagerByIdOrEmail(managerId));
+  }
+
+  @ApiParam({ name: 'managerId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: UpdateManagersDto })
+  @Patch(':managerId')
+  async updateManager(
+      @Req() req: any,
+      @Res() res: any,
+      @Body(new TrimPipe()) body: UpdateManagersDto,
+      @Param('managerId') managerId: string,
+  ) {
+    return res
+        .status(HttpStatus.OK)
+        .json(await this.managersService.updateManager(managerId, body));
   }
 }

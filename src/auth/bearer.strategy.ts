@@ -7,29 +7,30 @@ import { AdminService } from '../admin';
 import { ManagersService } from '../managers';
 
 @Injectable()
-export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
+class BaseAccessStrategy extends PassportStrategy(Strategy, 'access') {
   constructor(
-    private readonly adminService: AdminService,
-    private readonly managersService: ManagersService,
-    @Inject(JwtService) private readonly jwtService: JwtService,
+      private readonly adminService: AdminService,
+      private readonly managersService: ManagersService,
+      @Inject(JwtService) private readonly jwtService: JwtService,
+      secretOrKey: string,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.SECRET_ACCESS_WORD,
+      secretOrKey,
     });
   }
 
-  async validate(payload: any): Promise<Admin> {
+  async validate(payload: any): Promise<Admin | Manager> {
     let user: Admin | Manager;
 
-    if (payload.strategy !== 'access') {
+    if (payload.strategy !== this.name) {
       throw new UnauthorizedException();
     }
 
     try {
       const admin = await this.adminService.getAdminByIdOrEmail(payload.id);
-      const manager = await this.managersService.getManagerById(payload.id);
+      const manager = await this.managersService.getManagerByIdOrEmail(payload.id);
 
       if (admin) {
         user = admin;
@@ -52,55 +53,32 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 }
 
 @Injectable()
-export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+export class AccessStrategy extends BaseAccessStrategy {
   constructor(
-    private readonly adminService: AdminService,
-    private readonly managersService: ManagersService,
-    @Inject(JwtService) private readonly jwtService: JwtService,
+      adminService: AdminService,
+      managersService: ManagersService,
+      @Inject(JwtService) jwtService: JwtService,
   ) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: process.env.SECRET_REFRESH_WORD,
-    });
+    super(adminService, managersService, jwtService, process.env.SECRET_ACCESS_WORD);
   }
+}
 
-  async validate(payload: any): Promise<Admin> {
-    let user: Admin | Manager;
-
-    if (payload.strategy !== 'refresh') {
-      throw new UnauthorizedException();
-    }
-
-    try {
-      const admin = await this.adminService.getAdminByIdOrEmail(payload.id);
-      const manager = await this.managersService.getManagerById(payload.id);
-
-      if (admin) {
-        user = admin;
-      }
-
-      if (manager) {
-        user = manager;
-      }
-
-      if (!admin && !manager) {
-        throw new UnauthorizedException();
-      }
-
-      return user;
-    } catch (err) {
-      console.log(new Date().toISOString(), payload);
-      throw new UnauthorizedException();
-    }
+@Injectable()
+export class RefreshStrategy extends BaseAccessStrategy {
+  constructor(
+      adminService: AdminService,
+      managersService: ManagersService,
+      @Inject(JwtService) jwtService: JwtService,
+  ) {
+    super(adminService, managersService, jwtService, process.env.SECRET_REFRESH_WORD);
   }
 }
 
 @Injectable()
 export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
   constructor(
-    private managerService: ManagersService,
-    @Inject(JwtService) private readonly jwtService: JwtService,
+      private managerService: ManagersService,
+      @Inject(JwtService) private readonly jwtService: JwtService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
@@ -112,12 +90,12 @@ export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
   async validate(payload: any): Promise<Manager> {
     let manager: Manager;
 
-    if (payload.strategy !== 'activate') {
+    if (payload.strategy !== this.name) {
       throw new UnauthorizedException();
     }
 
     try {
-      manager = await this.managerService.getManagerById(payload.id);
+      manager = await this.managerService.getManagerByIdOrEmail(payload.id);
 
       if (!manager) {
         throw new UnauthorizedException();

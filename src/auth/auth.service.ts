@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Manager } from '@prisma/client';
 import { AdminService } from '../admin';
 import { LoginDto } from './dto';
 import { MailService, PasswordService } from '../core';
 import { ManagersService } from '../managers';
+import {EStatusManager} from "../managers/interface";
 
 @Injectable()
 export class AuthService {
@@ -21,14 +22,17 @@ export class AuthService {
     let user;
 
     const admin = await this.adminService.getAdminByIdOrEmail(email);
-    const manager = await this.managersService.getManagerByEmail(email);
+    const manager = await this.managersService.getManagerByIdOrEmail(email);
 
     if (admin) {
       user = admin;
-    } else if (manager) {
+    } else if (manager && manager.status === EStatusManager.UNBANNED) {
       user = manager;
-      await this.managersService.updateLastLoginManager(manager.id);
-    } else {
+      await this.managersService.updateManager(manager.id, {last_login: new Date()});
+    } else if (manager && manager.status === EStatusManager.BANNED) {
+      throw new HttpException('You cannot log in because your account is banned', HttpStatus.FORBIDDEN)
+    }
+    else {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
@@ -91,7 +95,7 @@ export class AuthService {
   }
 
   async sendActivateToken(email: string): Promise<void> {
-    const manager = await this.managersService.getManagerByEmail(email);
+    const manager = await this.managersService.getManagerByIdOrEmail(email);
 
     const activateToken = await this.jwtService.sign(
       { id: manager.id, strategy: 'activate' },
@@ -105,6 +109,6 @@ export class AuthService {
   }
 
   async activate(id: string, password: string): Promise<Manager> {
-    return this.managersService.updateActivateManager(id, password);
+    return this.managersService.updateManager(id, {password, is_active: true});
   }
 }

@@ -13,7 +13,7 @@ export class LoginDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, example: "Password123@" })
   @IsString()
   @Length(5, 25)
   @IsNotEmpty()
@@ -21,7 +21,7 @@ export class LoginDto {
 }
 
 export class PasswordDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, example: "Password123@" })
   @IsString()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
   @IsNotEmpty()

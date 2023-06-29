@@ -1,14 +1,12 @@
 import {
-  forwardRef,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
 } from '@nestjs/common';
 import { PasswordService, PrismaService } from "../core";
-import { Manager } from '@prisma/client';
-import { CreateManagersDto } from './dto';
-import { AuthService } from '../auth';
+import {Manager} from '@prisma/client';
+import {CreateManagersDto, UpdateManagersDto} from './dto';
+import {isEmail} from "class-validator";
 
 @Injectable()
 export class ManagersService {
@@ -21,20 +19,28 @@ export class ManagersService {
     return this.prismaService.manager.findMany();
   }
 
-  async getManagerById(managerId: string): Promise<Manager> {
-    return this.prismaService.manager.findFirst({
-      where: { id: managerId },
-    });
-  }
+  async getManagerByIdOrEmail(identifier: string): Promise<Manager | null> {
+    let manager: Manager | null = null;
 
-  async getManagerByEmail(email: string): Promise<Manager> {
-    return this.prismaService.manager.findFirst({
-      where: { email: email.trim().toLowerCase() },
-    });
+    if (isEmail(identifier)) {
+      manager = await this.prismaService.manager.findFirst({
+        where: {
+          email: identifier,
+        },
+      });
+    } else {
+      manager = await this.prismaService.manager.findFirst({
+        where: {
+          id: identifier,
+        },
+      });
+    }
+
+    return manager;
   }
 
   async createManager(manager: CreateManagersDto): Promise<Manager> {
-    if (await this.getManagerByEmail(manager.email)) {
+    if (await this.getManagerByIdOrEmail(manager.email)) {
       throw new HttpException(
         'Email is already in use.',
         HttpStatus.BAD_REQUEST,
@@ -50,24 +56,32 @@ export class ManagersService {
     }
   }
 
-  async updateActivateManager(
+  async updateManager(
     managerId: string,
-    password: string,
+    managerData: UpdateManagersDto,
   ): Promise<Manager> {
-    const hash = await this.passwordService.hashPassword(password);
+    let password;
+
+    if (managerData.password) {
+      password = await this.passwordService.hashPassword(managerData.password);
+    }
+
+    const updateData: UpdateManagersDto = {
+      name: managerData.name,
+      surname: managerData.surname,
+      email: managerData.email,
+      status: managerData.status,
+      is_active: managerData.is_active,
+      last_login: managerData.last_login,
+    }
+
+    if (password) {
+      updateData.password = password;
+    }
 
     return this.prismaService.manager.update({
       where: { id: managerId },
-      data: { password: hash, is_active: true },
-    });
-  }
-
-  async updateLastLoginManager(
-    managerId: string,
-  ): Promise<Manager> {
-    return this.prismaService.manager.update({
-      where: { id: managerId },
-      data: { last_login: new Date},
+      data: updateData,
     });
   }
 }
