@@ -6,8 +6,8 @@ import {
   PrismaService,
 } from '../core';
 import { JwtModule } from '@nestjs/jwt';
-import { ManagersController } from './managers.controller';
-import { ManagersService } from './managers.service';
+import { ManagerController } from '././manager.controller';
+import { ManagerService } from './manager.service';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { ManagersService } from './managers.service';
       },
     }),
   ],
-  controllers: [ManagersController],
-  providers: [PrismaService, ManagersService, PasswordService],
+  controllers: [ManagerController],
+  providers: [PrismaService, ManagerService, PasswordService],
 })
-export class ManagersModule {}
+export class ManagerModule {}

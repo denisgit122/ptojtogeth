@@ -1,7 +1,7 @@
 import { Entity } from 'typeorm';
 
 @Entity()
-export class OrdersEntity {
+export class OrderEntity {
   id?: string;
   name: string;
   surname: string;

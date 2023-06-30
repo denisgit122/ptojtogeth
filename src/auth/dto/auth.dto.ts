@@ -32,5 +32,20 @@ export class EmailDto {
   @ApiProperty({ example: 'max@gmail.com' })
   @IsEmail()
   @IsString()
+  @IsNotEmpty()
   email: string;
+}
+
+export class ChangePasswordDto {
+  @ApiProperty({ required: true, example: "Password123@" })
+  @IsString()
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
+  @IsNotEmpty()
+  oldPassword: string;
+
+  @ApiProperty({ required: true, example: "Password123@" })
+  @IsString()
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
+  @IsNotEmpty()
+  newPassword: string;
 }

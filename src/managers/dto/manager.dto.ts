@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {IsBoolean, IsDate, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Length, Matches} from 'class-validator';
+import {IsBoolean, IsDate, IsEmail, IsEnum, IsOptional, IsString, Length, Matches} from 'class-validator';
 import {EStatusManager} from "../interface";
 
-export class CreateManagersDto {
+export class CreateManagerDto {
   @ApiProperty({ example: 'Max' })
   @Length(2, 25)
   @IsString()
@@ -19,7 +19,7 @@ export class CreateManagersDto {
   email: string;
 }
 
-export class UpdateManagersDto {
+export class UpdateManagerDto {
   @ApiProperty({ example: 'Max' })
   @IsOptional()
   @Length(2, 25)

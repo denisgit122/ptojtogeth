@@ -1,32 +1,40 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { OrdersModule, OrdersController, OrdersService } from './orders';
-import { MailModule, MailService, PasswordModule, PasswordService, PrismaModule, PrismaService } from "./core";
+import { OrderModule, OrderController, OrderService } from './orders';
+import {
+  MailModule,
+  MailService,
+  PasswordModule,
+  PasswordService,
+  PrismaModule,
+  PrismaService,
+  TokenModule, TokenService
+} from "./core";
 import {
   AccessStrategy,
   ActivateStrategy,
   AuthController,
   AuthModule,
-  AuthService,
+  AuthService, ForgotStrategy,
   RefreshStrategy,
 } from './auth';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController, AdminModule, AdminService } from './admin';
 import { PassportModule } from '@nestjs/passport';
 import {
-  ManagersController,
-  ManagersModule,
-  ManagersService,
+  ManagerController,
+  ManagerModule,
+  ManagerService,
 } from './managers';
 
 @Module({
   imports: [
-    OrdersModule,
+    OrderModule,
     PrismaModule,
     AuthModule,
     PassportModule,
-    ManagersModule,
+    ManagerModule,
     PasswordModule,
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_WORD,
@@ -43,18 +51,25 @@ import {
     JwtModule.register({
       secret: process.env.SECRET_ACTIVATE_WORD,
       signOptions: {
-        expiresIn: '7d',
+        expiresIn: '1d',
+      },
+    }),
+    JwtModule.register({
+      secret: process.env.SECRET_FORGOT_PASSWORD_WORD,
+      signOptions: {
+        expiresIn: '30m',
       },
     }),
     AdminModule,
+    TokenModule,
     MailModule,
   ],
   controllers: [
     AppController,
-    OrdersController,
+    OrderController,
     AuthController,
     AdminController,
-    ManagersController,
+    ManagerController,
   ],
   providers: [
     AppService,
@@ -63,11 +78,13 @@ import {
     AdminService,
     AccessStrategy,
     RefreshStrategy,
-    ManagersService,
-    OrdersService,
+    ManagerService,
+    OrderService,
     MailService,
     PasswordService,
     ActivateStrategy,
+    TokenService,
+    ForgotStrategy
   ],
 })
 export class AppModule {}

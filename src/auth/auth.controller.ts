@@ -15,12 +15,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { EmailDto, LoginDto, PasswordDto } from './dto';
+import {ChangePasswordDto, EmailDto, LoginDto, PasswordDto} from './dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.decorator';
-import { IEmail } from '../orders';
-import { IPassword } from '../managers/interface';
 import { TrimPipe } from '../core';
 
 @ApiTags('Auth')
@@ -65,7 +63,7 @@ export class AuthController {
   async sendActivateToken(
     @Req() req: any,
     @Res() res: any,
-    @Body(new TrimPipe()) body: IEmail,
+    @Body(new TrimPipe()) body: EmailDto,
   ) {
     return res
       .status(HttpStatus.OK)
@@ -82,10 +80,58 @@ export class AuthController {
     @Req() req: any,
     @Res() res: any,
     @User() user: any,
-    @Body() body: IPassword,
+    @Body() body: PasswordDto,
   ) {
     return res
       .status(HttpStatus.OK)
       .json(await this.authService.activate(user.id, body.password));
+  }
+
+  @Post('change/password')
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @UseGuards(AuthGuard('access'))
+  @ApiBearerAuth()
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(
+      @Req() req: any,
+      @Res() res: any,
+      @Body() body: ChangePasswordDto,
+      @User() user: any,
+  ) {
+    return res
+        .status(HttpStatus.OK)
+        .json(await this.authService.changePassword(body, user.id));
+  }
+
+  @Post('forgot/password')
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiBody({ type: EmailDto })
+  async sendForgotPasswordToken(
+      @Req() req: any,
+      @Res() res: any,
+      @Body(new TrimPipe()) body: EmailDto,
+  ) {
+    return res
+        .status(HttpStatus.OK)
+        .json(await this.authService.sendForgotPasswordToken(body.email));
+  }
+
+  @Put('forgot/password')
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiQuery({ name: 'token', required: true })
+  @ApiBody({ type: PasswordDto })
+  @UseGuards(AuthGuard('forgot'))
+  async setForgotPassword(
+      @Req() req: any,
+      @Res() res: any,
+      @User() user: any,
+      @Body() body: PasswordDto,
+  ) {
+    return res
+        .status(HttpStatus.OK)
+        .json(await this.authService.setForgotPassword(user.id, body.password));
   }
 }

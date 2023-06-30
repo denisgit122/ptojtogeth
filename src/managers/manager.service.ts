@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { PasswordService, PrismaService } from "../core";
 import {Manager} from '@prisma/client';
-import {CreateManagersDto, UpdateManagersDto} from './dto';
+import {CreateManagerDto, UpdateManagerDto} from './dto';
 import {isEmail} from "class-validator";
 
 @Injectable()
-export class ManagersService {
+export class ManagerService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly passwordService: PasswordService,
@@ -39,7 +39,7 @@ export class ManagersService {
     return manager;
   }
 
-  async createManager(manager: CreateManagersDto): Promise<Manager> {
+  async createManager(manager: CreateManagerDto): Promise<Manager> {
     if (await this.getManagerByIdOrEmail(manager.email)) {
       throw new HttpException(
         'Email is already in use.',
@@ -58,7 +58,7 @@ export class ManagersService {
 
   async updateManager(
     managerId: string,
-    managerData: UpdateManagersDto,
+    managerData: UpdateManagerDto,
   ): Promise<Manager> {
     let password;
 
@@ -66,7 +66,7 @@ export class ManagersService {
       password = await this.passwordService.hashPassword(managerData.password);
     }
 
-    const updateData: UpdateManagersDto = {
+    const updateData: UpdateManagerDto = {
       name: managerData.name,
       surname: managerData.surname,
       email: managerData.email,

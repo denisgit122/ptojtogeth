@@ -3,9 +3,9 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminModule, AdminService } from '../admin';
 import { PassportModule } from '@nestjs/passport';
-import { AccessStrategy, ActivateStrategy, RefreshStrategy } from './bearer.strategy';
-import { ManagersModule, ManagersService } from '../managers';
-import { MailModule, MailService, PasswordModule } from '../core';
+import {AccessStrategy, ActivateStrategy, ForgotStrategy, RefreshStrategy} from './bearer.strategy';
+import { ManagerModule, ManagerService } from '../managers';
+import {MailModule, MailService, PasswordModule, TokenModule, TokenService} from '../core';
 import { AuthController } from './auth.controller';
 
 @Module({
@@ -13,8 +13,9 @@ import { AuthController } from './auth.controller';
     PassportModule,
     PasswordModule,
     AdminModule,
-    ManagersModule,
+    ManagerModule,
     MailModule,
+    TokenModule,
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_WORD,
       signOptions: {
@@ -30,7 +31,13 @@ import { AuthController } from './auth.controller';
     JwtModule.register({
       secret: process.env.SECRET_ACTIVATE_WORD,
       signOptions: {
-        expiresIn: '7d',
+        expiresIn: '1d',
+      },
+    }),
+    JwtModule.register({
+      secret: process.env.SECRET_FORGOT_PASSWORD_WORD,
+      signOptions: {
+        expiresIn: '30m',
       },
     }),
   ],
@@ -40,9 +47,11 @@ import { AuthController } from './auth.controller';
     AdminService,
     AccessStrategy,
     RefreshStrategy,
-    ManagersService,
+    ManagerService,
     MailService,
     ActivateStrategy,
+    TokenService,
+    ForgotStrategy
   ],
   exports: [AuthService],
 })

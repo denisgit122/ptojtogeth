@@ -18,11 +18,10 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { AddCommentDto, CreateGroupDto, UpdateOrdersDto } from './dto';
+import { OrderService } from './order.service';
+import { AddCommentDto, CreateGroupDto, UpdateOrderDto } from './dto';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { AuthGuard } from '@nestjs/passport';
-import { IComment, IGroup } from './interface';
 import { User } from '../auth/user.decorator';
 import { TrimPipe } from '../core';
 
@@ -30,8 +29,8 @@ import { TrimPipe } from '../core';
 @Controller('orders')
 @UseGuards(AuthGuard('access'))
 @ApiBearerAuth()
-export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+export class OrderController {
+  constructor(private readonly orderService: OrderService) {}
 
   @Get()
   @ApiResponse({ status: 200, description: 'OK' })
@@ -71,14 +70,14 @@ export class OrdersController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.getOrdersList(query));
+      .json(await this.orderService.getOrdersList(query));
   }
 
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Get('groups')
   async getGroups(@Req() req: any, @Res() res: any) {
-    return res.status(HttpStatus.OK).json(await this.ordersService.getGroups());
+    return res.status(HttpStatus.OK).json(await this.orderService.getGroups());
   }
 
   @ApiResponse({ status: 200, description: 'OK' })
@@ -87,7 +86,7 @@ export class OrdersController {
   async getStatisticOnOrders(@Req() req: any, @Res() res: any) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.getStatisticOnOrders());
+      .json(await this.orderService.getStatisticOnOrders());
   }
 
   @ApiResponse({ status: 200, description: 'OK' })
@@ -96,12 +95,12 @@ export class OrdersController {
   @Post('create/group')
   async createGroup(
     @Req() req: any,
-    @Body(new TrimPipe()) body: IGroup,
+    @Body(new TrimPipe()) body: CreateGroupDto,
     @Res() res: any,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.createGroup(body));
+      .json(await this.orderService.createGroup(body));
   }
 
   @ApiParam({ name: 'orderId', required: true })
@@ -115,7 +114,7 @@ export class OrdersController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.getOrderById(orderId));
+      .json(await this.orderService.getOrderById(orderId));
   }
 
   @ApiParam({ name: 'orderId', required: true })
@@ -124,13 +123,13 @@ export class OrdersController {
   @Patch(':orderId')
   async editOrder(
     @Req() req: any,
-    @Body(new TrimPipe()) body: UpdateOrdersDto,
+    @Body(new TrimPipe()) body: UpdateOrderDto,
     @Res() res: any,
     @Param('orderId') orderId: string,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.editOrderById(orderId, body));
+      .json(await this.orderService.editOrderById(orderId, body));
   }
 
   @ApiParam({ name: 'orderId', required: true })
@@ -140,14 +139,14 @@ export class OrdersController {
   @Post(':orderId/comment')
   async addComment(
     @Req() req: any,
-    @Body(new TrimPipe()) body: IComment,
+    @Body(new TrimPipe()) body: AddCommentDto,
     @Res() res: any,
     @Param('orderId') orderId: string,
     @User() user: any,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.addComment(orderId, body, user));
+      .json(await this.orderService.addComment(orderId, body, user));
   }
 
   @ApiParam({ name: 'orderId', required: true })
@@ -161,6 +160,6 @@ export class OrdersController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.ordersService.getCommentsFromOrderById(orderId));
+      .json(await this.orderService.getCommentsFromOrderById(orderId));
   }
 }

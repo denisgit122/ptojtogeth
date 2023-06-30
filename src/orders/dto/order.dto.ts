@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { ECourse, ECourse_format, ECourse_type, EStatus } from '../interface';
 
-export class UpdateOrdersDto {
+export class UpdateOrderDto {
   @ApiProperty({ example: 'Max' })
   @IsOptional()
   @Length(2, 25)
@@ -95,7 +95,7 @@ export class UpdateOrdersDto {
 
 export class AddCommentDto {
   @ApiProperty({ example: 'Hello World!' })
-  @Length(2, 100)
+  @Length(2, 300)
   @IsString()
   comment: string;
 }
