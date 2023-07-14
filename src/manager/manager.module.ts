@@ -6,13 +6,15 @@ import {
   PrismaService,
 } from '../core';
 import { JwtModule } from '@nestjs/jwt';
-import { ManagerController } from '././manager.controller';
+import { ManagerController } from './manager.controller';
 import { ManagerService } from './manager.service';
+import { OrderModule, OrderService } from '../order';
 
 @Module({
   imports: [
     PrismaModule,
     PasswordModule,
+    OrderModule,
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_WORD,
       signOptions: {
@@ -21,6 +23,11 @@ import { ManagerService } from './manager.service';
     }),
   ],
   controllers: [ManagerController],
-  providers: [PrismaService, ManagerService, PasswordService],
+  providers: [
+    PrismaService,
+    ManagerService,
+    PasswordService,
+    OrderService,
+  ],
 })
 export class ManagerModule {}

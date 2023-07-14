@@ -10,14 +10,15 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Param, Patch,
+  Param,
+  Patch,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { ManagerService } from './manager.service';
-import {CreateManagerDto, UpdateManagerDto} from './dto';
+import { CreateManagerDto, UpdateManagerDto } from './dto';
 import { TrimPipe } from '../core';
 import { AdminAuthGuard } from '../admin';
 
@@ -37,7 +38,7 @@ export class ManagerController {
       .json(await this.managerService.getManagersList());
   }
 
-  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 201, description: 'Created' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: CreateManagerDto })
   @Post('create')
@@ -62,7 +63,21 @@ export class ManagerController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.managerService.getManagerByIdOrEmail(managerId));
+      .json(await this.managerService.getManagerById(managerId));
+  }
+
+  @ApiParam({ name: 'managerId', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get(':managerId/statistic')
+  async getStatisticOnManager(
+    @Req() req: any,
+    @Res() res: any,
+    @Param('managerId') managerId: string,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.managerService.getStatisticOnManager(managerId));
   }
 
   @ApiParam({ name: 'managerId', required: true })
@@ -71,13 +86,13 @@ export class ManagerController {
   @ApiBody({ type: UpdateManagerDto })
   @Patch(':managerId')
   async updateManager(
-      @Req() req: any,
-      @Res() res: any,
-      @Body(new TrimPipe()) body: UpdateManagerDto,
-      @Param('managerId') managerId: string,
+    @Req() req: any,
+    @Res() res: any,
+    @Body(new TrimPipe()) body: UpdateManagerDto,
+    @Param('managerId') managerId: string,
   ) {
     return res
-        .status(HttpStatus.OK)
-        .json(await this.managerService.updateManager(managerId, body));
+      .status(HttpStatus.OK)
+      .json(await this.managerService.updateManager(managerId, body));
   }
 }

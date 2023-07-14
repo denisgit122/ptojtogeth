@@ -2,16 +2,14 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Admin, Manager } from '@prisma/client';
-import { AdminService } from '../admin';
-import { ManagerService } from '../managers';
+import { IManager, ManagerService } from '../manager';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
   constructor(
-      private readonly adminService: AdminService,
-      private readonly managersService: ManagerService,
-      @Inject(JwtService) private readonly jwtService: JwtService,
+    private readonly managersService: ManagerService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -20,26 +18,15 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
     });
   }
 
-  async validate(payload: any): Promise<Admin> {
-    let user: Admin | Manager;
-
+  async validate(payload: any): Promise<User> {
     if (payload.strategy !== 'access') {
       throw new UnauthorizedException();
     }
 
     try {
-      const admin = await this.adminService.getAdminByIdOrEmail(payload.id);
-      const manager = await this.managersService.getManagerByIdOrEmail(payload.id);
+      const user = await this.managersService.getManagerByIdOrEmail(payload.id);
 
-      if (admin) {
-        user = admin;
-      }
-
-      if (manager) {
-        user = manager;
-      }
-
-      if (!admin && !manager) {
+      if (!user) {
         throw new UnauthorizedException();
       }
 
@@ -54,9 +41,8 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   constructor(
-      private readonly adminService: AdminService,
-      private readonly managersService: ManagerService,
-      @Inject(JwtService) private readonly jwtService: JwtService,
+    private readonly managersService: ManagerService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -65,26 +51,15 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     });
   }
 
-  async validate(payload: any): Promise<Admin> {
-    let user: Admin | Manager;
-
+  async validate(payload: any): Promise<User> {
     if (payload.strategy !== 'refresh') {
       throw new UnauthorizedException();
     }
 
     try {
-      const admin = await this.adminService.getAdminByIdOrEmail(payload.id);
-      const manager = await this.managersService.getManagerByIdOrEmail(payload.id);
+      const user = await this.managersService.getManagerByIdOrEmail(payload.id);
 
-      if (admin) {
-        user = admin;
-      }
-
-      if (manager) {
-        user = manager;
-      }
-
-      if (!admin && !manager) {
+      if (!user) {
         throw new UnauthorizedException();
       }
 
@@ -99,8 +74,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 @Injectable()
 export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
   constructor(
-      private managerService: ManagerService,
-      @Inject(JwtService) private readonly jwtService: JwtService,
+    private managerService: ManagerService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
@@ -109,15 +84,13 @@ export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
     });
   }
 
-  async validate(payload: any): Promise<Manager> {
-    let manager: Manager;
-
+  async validate(payload: any): Promise<IManager> {
     if (payload.strategy !== 'activate') {
       throw new UnauthorizedException();
     }
 
     try {
-      manager = await this.managerService.getManagerByIdOrEmail(payload.id);
+      const manager = await this.managerService.getManagerByIdOrEmail(payload.id);
 
       if (!manager) {
         throw new UnauthorizedException();
@@ -134,8 +107,8 @@ export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
 @Injectable()
 export class ForgotStrategy extends PassportStrategy(Strategy, 'forgot') {
   constructor(
-      private managerService: ManagerService,
-      @Inject(JwtService) private readonly jwtService: JwtService,
+    private managerService: ManagerService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
@@ -144,15 +117,13 @@ export class ForgotStrategy extends PassportStrategy(Strategy, 'forgot') {
     });
   }
 
-  async validate(payload: any): Promise<Manager> {
-    let manager: Manager;
-
+  async validate(payload: any): Promise<IManager> {
     if (payload.strategy !== 'forgot') {
       throw new UnauthorizedException();
     }
 
     try {
-      manager = await this.managerService.getManagerByIdOrEmail(payload.id);
+      const manager = await this.managerService.getManagerByIdOrEmail(payload.id);
 
       if (!manager) {
         throw new UnauthorizedException();

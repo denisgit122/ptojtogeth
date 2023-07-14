@@ -13,15 +13,15 @@ export class LoginDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ required: true, example: "Password123@" })
+  @ApiProperty({ required: true, example: 'Password123@' })
   @IsString()
-  @Length(5, 25)
+  @Length(5, 25, { message: 'Email or password is incorrect' })
   @IsNotEmpty()
   password: string;
 }
 
 export class PasswordDto {
-  @ApiProperty({ required: true, example: "Password123@" })
+  @ApiProperty({ required: true, example: 'Password123@' })
   @IsString()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
   @IsNotEmpty()
@@ -37,13 +37,13 @@ export class EmailDto {
 }
 
 export class ChangePasswordDto {
-  @ApiProperty({ required: true, example: "Password123@" })
+  @ApiProperty({ required: true, example: 'Password123@' })
   @IsString()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
   @IsNotEmpty()
   oldPassword: string;
 
-  @ApiProperty({ required: true, example: "Password123@" })
+  @ApiProperty({ required: true, example: 'Password123@' })
   @IsString()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
   @IsNotEmpty()

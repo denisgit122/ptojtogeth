@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { OrderModule, OrderController, OrderService } from './orders';
+import { OrderModule, OrderController, OrderService } from './order';
 import {
   MailModule,
   MailService,
@@ -9,24 +9,22 @@ import {
   PasswordService,
   PrismaModule,
   PrismaService,
-  TokenModule, TokenService
-} from "./core";
+  TokenModule,
+  TokenService,
+} from './core';
 import {
   AccessStrategy,
   ActivateStrategy,
   AuthController,
   AuthModule,
-  AuthService, ForgotStrategy,
+  AuthService,
+  ForgotStrategy,
   RefreshStrategy,
 } from './auth';
 import { JwtModule } from '@nestjs/jwt';
 import { AdminController, AdminModule, AdminService } from './admin';
 import { PassportModule } from '@nestjs/passport';
-import {
-  ManagerController,
-  ManagerModule,
-  ManagerService,
-} from './managers';
+import { ManagerController, ManagerModule, ManagerService } from './manager';
 
 @Module({
   imports: [
@@ -84,7 +82,7 @@ import {
     PasswordService,
     ActivateStrategy,
     TokenService,
-    ForgotStrategy
+    ForgotStrategy,
   ],
 })
 export class AppModule {}

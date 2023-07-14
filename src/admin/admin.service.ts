@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PasswordService, PrismaService } from '../core';
-import { Admin } from '@prisma/client';
-import { isEmail } from 'class-validator';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
@@ -11,29 +10,11 @@ export class AdminService {
   ) {}
 
   async checkAdminExistence(): Promise<boolean> {
-    const adminCount = await this.prismaService.admin.count();
+    const adminCount = await this.prismaService.user.count({
+      where: { role: 'admin' },
+    });
 
     return adminCount > 0;
-  }
-
-  async getAdminByIdOrEmail(identifier: string): Promise<Admin | null> {
-    let admin: Admin | null = null;
-
-    if (isEmail(identifier)) {
-      admin = await this.prismaService.admin.findFirst({
-        where: {
-          email: identifier,
-        },
-      });
-    } else {
-      admin = await this.prismaService.admin.findFirst({
-        where: {
-          id: identifier,
-        },
-      });
-    }
-
-    return admin;
   }
 
   async createAdmin(
@@ -41,15 +22,17 @@ export class AdminService {
     password: string,
     name: string,
     surname: string,
-  ): Promise<Admin> {
+  ): Promise<User> {
     const passwordHash = await this.passwordService.hashPassword(password);
 
-    return this.prismaService.admin.create({
+    return this.prismaService.user.create({
       data: {
         email,
         password: passwordHash,
         name,
         surname,
+        role: 'admin',
+        is_active: true,
       },
     });
   }

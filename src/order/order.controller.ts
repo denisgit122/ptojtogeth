@@ -91,6 +91,19 @@ export class OrderController {
 
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get('manager')
+  async getOrdersFromManager(
+    @Req() req: any,
+    @Res() res: any,
+    @User() user: any,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.orderService.getOrdersFromManagerById(user.id));
+  }
+
+  @ApiResponse({ status: 201, description: 'Created' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: CreateGroupDto })
   @Post('create/group')
   async createGroup(
@@ -126,14 +139,15 @@ export class OrderController {
     @Body(new TrimPipe()) body: UpdateOrderDto,
     @Res() res: any,
     @Param('orderId') orderId: string,
+    @User() user: any,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.orderService.editOrderById(orderId, body));
+      .json(await this.orderService.editOrderById(orderId, body, user.id));
   }
 
   @ApiParam({ name: 'orderId', required: true })
-  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 201, description: 'Created' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: AddCommentDto })
   @Post(':orderId/comment')

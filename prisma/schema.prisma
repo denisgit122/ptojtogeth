@@ -24,23 +24,13 @@ model Order {
   utm                  String?
   msg                  String?
   status               String?
-  manager              String?
+  manager              User?     @relation(fields: [managerId], references: [id])
+  managerId            String?   @db.ObjectId
   groupFromProgramming Group?    @relation(fields: [group], references: [name])
   group                String?
   comments             Comment[]
 
   @@map(name: "orders")
-}
-
-model Admin {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  surname  String
-  email    String
-  password String
-  role     String @default("admin")
-
-  @@map(name: "admins")
 }
 
 model Comment {
@@ -62,16 +52,17 @@ model Group {
   @@map(name: "groups")
 }
 
-model Manager {
+model User {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   surname    String
   email      String    @unique
   password   String?
-  status     String    @default("unbanned")
-  is_active  Boolean   @default(false)
-  last_login DateTime?
   role       String    @default("manager")
+  status     String?   @default("unbanned")
+  is_active  Boolean?  @default(false)
+  last_login DateTime?
+  Order      Order[]
 
-  @@map(name: "managers")
+  @@map(name: "users")
 }

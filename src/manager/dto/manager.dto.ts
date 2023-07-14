@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {IsBoolean, IsDate, IsEmail, IsEnum, IsOptional, IsString, Length, Matches} from 'class-validator';
-import {EStatusManager} from "../interface";
+import {
+  IsBoolean,
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
+import { EStatusManager } from '../interface';
 
 export class CreateManagerDto {
   @ApiProperty({ example: 'Max' })
@@ -9,7 +18,7 @@ export class CreateManagerDto {
   name: string;
 
   @ApiProperty({ example: 'Ivanov' })
-  @Length(5, 25)
+  @Length(2, 25)
   @IsString()
   surname: string;
 
@@ -28,7 +37,7 @@ export class UpdateManagerDto {
 
   @ApiProperty({ example: 'Ivanov' })
   @IsOptional()
-  @Length(5, 25)
+  @Length(2, 25)
   @IsString()
   surname?: string;
 
@@ -49,12 +58,12 @@ export class UpdateManagerDto {
   @IsBoolean()
   is_active?: boolean;
 
-  @ApiProperty({ example: "2022-05-30T17:06:14Z" })
+  @ApiProperty({ example: '2022-05-30T17:06:14Z' })
   @IsOptional()
   @IsDate()
   last_login?: Date;
 
-  @ApiProperty({ example: "Password123@" })
+  @ApiProperty({ example: 'Password123@' })
   @IsOptional()
   @IsString()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)

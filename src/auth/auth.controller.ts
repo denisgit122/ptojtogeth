@@ -15,7 +15,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {ChangePasswordDto, EmailDto, LoginDto, PasswordDto} from './dto';
+import { ChangePasswordDto, EmailDto, LoginDto, PasswordDto } from './dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './user.decorator';
@@ -33,8 +33,8 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
-  async login(@Body(new TrimPipe()) loginDto: LoginDto, @Res() res: any) {
-    const tokenPair = await this.authService.login(loginDto);
+  async login(@Body(new TrimPipe()) loginBody: LoginDto, @Res() res: any) {
+    const tokenPair = await this.authService.login(loginBody);
 
     if (!tokenPair) {
       return res
@@ -94,14 +94,14 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiBody({ type: ChangePasswordDto })
   async changePassword(
-      @Req() req: any,
-      @Res() res: any,
-      @Body() body: ChangePasswordDto,
-      @User() user: any,
+    @Req() req: any,
+    @Res() res: any,
+    @Body() body: ChangePasswordDto,
+    @User() user: any,
   ) {
     return res
-        .status(HttpStatus.OK)
-        .json(await this.authService.changePassword(body, user.id));
+      .status(HttpStatus.OK)
+      .json(await this.authService.changePassword(body, user.id));
   }
 
   @Post('forgot/password')
@@ -109,13 +109,13 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiBody({ type: EmailDto })
   async sendForgotPasswordToken(
-      @Req() req: any,
-      @Res() res: any,
-      @Body(new TrimPipe()) body: EmailDto,
+    @Req() req: any,
+    @Res() res: any,
+    @Body(new TrimPipe()) body: EmailDto,
   ) {
     return res
-        .status(HttpStatus.OK)
-        .json(await this.authService.sendForgotPasswordToken(body.email));
+      .status(HttpStatus.OK)
+      .json(await this.authService.sendForgotPasswordToken(body.email));
   }
 
   @Put('forgot/password')
@@ -125,13 +125,13 @@ export class AuthController {
   @ApiBody({ type: PasswordDto })
   @UseGuards(AuthGuard('forgot'))
   async setForgotPassword(
-      @Req() req: any,
-      @Res() res: any,
-      @User() user: any,
-      @Body() body: PasswordDto,
+    @Req() req: any,
+    @Res() res: any,
+    @User() user: any,
+    @Body() body: PasswordDto,
   ) {
     return res
-        .status(HttpStatus.OK)
-        .json(await this.authService.setForgotPassword(user.id, body.password));
+      .status(HttpStatus.OK)
+      .json(await this.authService.setForgotPassword(user.id, body.password));
   }
 }

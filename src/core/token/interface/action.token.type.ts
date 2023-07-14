@@ -1,4 +1,4 @@
 export enum EActionTokenType {
-    forgot = "forgot",
-    activate = "activate",
+  forgot = 'forgot',
+  activate = 'activate',
 }

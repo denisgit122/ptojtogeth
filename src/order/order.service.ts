@@ -2,13 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Comment, Group, Order } from '@prisma/client';
 import { PrismaService } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
-import {AddCommentDto, CreateGroupDto, UpdateOrderDto} from './dto';
+import { AddCommentDto, CreateGroupDto, UpdateOrderDto } from './dto';
 import { OrderEntity } from './order.entity';
-import {
-  EStatus,
-  ICustomPaginated,
-  IStatistic,
-} from './interface';
+import { EStatus, ICustomPaginated, IStatistic } from './interface';
 import * as moment from 'moment';
 
 @Injectable()
@@ -65,10 +61,15 @@ export class OrderService {
           key === 'course_type' ||
           key === 'course_format' ||
           key === 'status' ||
-          key === 'group' ||
-          key === 'manager'
+          key === 'group'
         ) {
           where[key] = { equals: value };
+        }
+
+        if (key === 'manager') {
+          where[key] = {
+            name: { equals: value },
+          };
         }
 
         if (key === 'age') {
@@ -89,6 +90,13 @@ export class OrderService {
 
     const totalCount = await this.countOrders();
     const orders = await this.prismaService.order.findMany({
+      include: {
+        manager: {
+          select: {
+            name: true,
+          },
+        },
+      },
       skip,
       take,
       orderBy,
@@ -109,16 +117,34 @@ export class OrderService {
   async getOrderById(orderId: string): Promise<Order> {
     return this.prismaService.order.findFirst({
       where: { id: orderId },
+      include: {
+        manager: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
   }
 
   async getOrderByEmail(email: string): Promise<Order> {
     return this.prismaService.order.findFirst({
       where: { email },
+      include: {
+        manager: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
   }
 
-  async editOrderById(orderId: string, orderData: UpdateOrderDto) {
+  async editOrderById(
+    orderId: string,
+    orderData: UpdateOrderDto,
+    managerId: string,
+  ) {
     const order = await this.getOrderById(orderId);
     let group;
 
@@ -129,7 +155,7 @@ export class OrderService {
       }
     }
 
-    if (order && order.manager === null) {
+    if (order && order.managerId === null) {
       const updateData: UpdateOrderDto = {
         name: orderData.name,
         surname: orderData.surname,
@@ -141,7 +167,7 @@ export class OrderService {
         status: orderData.status,
         sum: orderData.sum,
         already_paid: orderData.already_paid,
-        manager: orderData.manager,
+        managerId,
       };
 
       if (orderData.email) {
@@ -165,6 +191,13 @@ export class OrderService {
       return this.prismaService.order.update({
         where: { id: orderId },
         data: updateData,
+        include: {
+          manager: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     }
   }
@@ -178,15 +211,18 @@ export class OrderService {
 
     if (
       order &&
-      order.manager === null &&
+      order.managerId === null &&
       (order.status === EStatus.NEW || order.status === null)
     ) {
       const comment = data.comment;
 
-      await this.editOrderById(orderId, {
-        manager: user.name,
-        status: EStatus.IN_WORK,
-      });
+      await this.editOrderById(
+        orderId,
+        {
+          status: EStatus.IN_WORK,
+        },
+        user.id,
+      );
 
       return this.prismaService.comment.create({
         data: {
@@ -197,7 +233,7 @@ export class OrderService {
         },
       });
     }
-    return new HttpException('You can not add comment', HttpStatus.BAD_REQUEST);
+    throw new HttpException('You can not add comment', HttpStatus.BAD_REQUEST);
   }
 
   async checkOrder(orderId: string): Promise<Order> {
@@ -246,7 +282,7 @@ export class OrderService {
     return this.prismaService.group.findMany();
   }
 
-  async countOrders(argument?: Partial<OrderEntity>): Promise<number> {
+  async countOrders(argument?: Partial<Order>): Promise<number> {
     const where: any = argument ? { ...argument } : {};
 
     return this.prismaService.order.count({ where });
@@ -255,20 +291,31 @@ export class OrderService {
   async getStatisticOnOrders(): Promise<IStatistic> {
     const total = await this.countOrders();
     const inWork = await this.countOrders({ status: EStatus.IN_WORK });
-    const nullOrders = await this.countOrders({ status: null });
     const agree = await this.countOrders({ status: EStatus.AGREE });
     const disagree = await this.countOrders({ status: EStatus.DISAGREE });
     const dubbing = await this.countOrders({ status: EStatus.DUBBING });
-    const newOrders = await this.countOrders({ status: EStatus.NEW });
+    const newOrders = await this.countOrders({ status: EStatus.NEW && null });
 
     return {
       total,
       inWork,
-      null: nullOrders,
       agree,
       disagree,
       dubbing,
       new: newOrders,
     };
+  }
+
+  async getOrdersFromManagerById(managerId: string): Promise<Order[]> {
+    return this.prismaService.order.findMany({
+      where: { managerId },
+      include: {
+        manager: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
   }
 }

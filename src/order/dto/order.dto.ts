@@ -21,7 +21,7 @@ export class UpdateOrderDto {
 
   @ApiProperty({ example: 'Ivanov' })
   @IsOptional()
-  @Length(5, 25)
+  @Length(2, 25)
   @IsString()
   surname?: string;
 
@@ -86,11 +86,10 @@ export class UpdateOrderDto {
   @IsString()
   group?: string;
 
-  @ApiProperty({ example: 'Sasha' })
+  @ApiProperty({ example: '12345' })
   @IsOptional()
-  @Length(5, 25)
   @IsString()
-  manager?: string;
+  managerId?: string;
 }
 
 export class AddCommentDto {

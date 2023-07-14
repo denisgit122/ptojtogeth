@@ -1,4 +1,9 @@
-import {ArgumentMetadata, BadRequestException, HttpException, Injectable, PipeTransform} from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  Injectable,
+  PipeTransform,
+} from '@nestjs/common';
 
 @Injectable()
 export class TrimPipe implements PipeTransform {
@@ -21,8 +26,9 @@ export class TrimPipe implements PipeTransform {
           this.processValues(value);
         } else if (typeof value === 'string') {
           values[key] = value.trim() || undefined;
-        } if (values[key] === undefined) {
-          throw new BadRequestException('You cannot enter such data')
+        }
+        if (values[key] === undefined) {
+          throw new BadRequestException('You cannot enter such data');
         }
       }
     });
