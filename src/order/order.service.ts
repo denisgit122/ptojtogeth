@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Comment, Group, Order } from '@prisma/client';
-import { PrismaService } from '../core';
+import {Comment, Group, Order} from '@prisma/client';
+import {PrismaService, selectFieldsOfOrder} from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { AddCommentDto, CreateGroupDto, UpdateOrderDto } from './dto';
 import { OrderEntity } from './order.entity';
 import { EStatus, ICustomPaginated, IStatistic } from './interface';
 import * as moment from 'moment';
+import {isEmail} from "class-validator";
 
 @Injectable()
 export class OrderService {
@@ -90,13 +91,7 @@ export class OrderService {
 
     const totalCount = await this.countOrders();
     const orders = await this.prismaService.order.findMany({
-      include: {
-        manager: {
-          select: {
-            name: true,
-          },
-        },
-      },
+      select: selectFieldsOfOrder,
       skip,
       take,
       orderBy,
@@ -114,30 +109,31 @@ export class OrderService {
     };
   }
 
-  async getOrderById(orderId: string): Promise<Order> {
+  async getOrderById(orderId: string) {
     return this.prismaService.order.findFirst({
       where: { id: orderId },
-      include: {
-        manager: {
-          select: {
-            name: true,
-          },
-        },
-      },
+      select: selectFieldsOfOrder
     });
   }
 
-  async getOrderByEmail(email: string): Promise<Order> {
-    return this.prismaService.order.findFirst({
-      where: { email },
-      include: {
-        manager: {
-          select: {
-            name: true,
-          },
+  async getOrderByIdOrEmail(identifier: string): Promise<Order | null> {
+    let order: Order | null = null;
+
+    if (isEmail(identifier)) {
+      order = await this.prismaService.order.findFirst({
+        where: {
+          email: identifier,
         },
-      },
-    });
+      });
+    } else {
+      order = await this.prismaService.order.findFirst({
+        where: {
+          id: identifier,
+        },
+      });
+    }
+
+    return order;
   }
 
   async editOrderById(
@@ -145,7 +141,7 @@ export class OrderService {
     orderData: UpdateOrderDto,
     managerId: string,
   ) {
-    const order = await this.getOrderById(orderId);
+    const order = await this.getOrderByIdOrEmail(orderId);
     let group;
 
     if (orderData.group) {
@@ -172,7 +168,7 @@ export class OrderService {
 
       if (orderData.email) {
         const normalizedEmail = orderData.email.toLowerCase();
-        const email = await this.getOrderByEmail(normalizedEmail);
+        const email = await this.getOrderByIdOrEmail(normalizedEmail);
 
         if (!email) {
           updateData.email = normalizedEmail;
@@ -191,13 +187,7 @@ export class OrderService {
       return this.prismaService.order.update({
         where: { id: orderId },
         data: updateData,
-        include: {
-          manager: {
-            select: {
-              name: true,
-            },
-          },
-        },
+        select: selectFieldsOfOrder
       });
     }
   }
@@ -236,8 +226,8 @@ export class OrderService {
     throw new HttpException('You can not add comment', HttpStatus.BAD_REQUEST);
   }
 
-  async checkOrder(orderId: string): Promise<Order> {
-    const order = await this.getOrderById(orderId);
+  async checkOrder(orderId: string) {
+    const order = await this.getOrderByIdOrEmail(orderId);
 
     if (!order) {
       throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
@@ -306,16 +296,10 @@ export class OrderService {
     };
   }
 
-  async getOrdersFromManagerById(managerId: string): Promise<Order[]> {
+  async getOrdersFromManagerById(managerId: string) {
     return this.prismaService.order.findMany({
       where: { managerId },
-      include: {
-        manager: {
-          select: {
-            name: true,
-          },
-        },
-      },
+      select: selectFieldsOfOrder
     });
   }
 }

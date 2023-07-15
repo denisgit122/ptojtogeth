@@ -90,7 +90,9 @@ export class ActivateStrategy extends PassportStrategy(Strategy, 'activate') {
     }
 
     try {
-      const manager = await this.managerService.getManagerByIdOrEmail(payload.id);
+      const manager = await this.managerService.getManagerByIdOrEmail(
+        payload.id,
+      );
 
       if (!manager) {
         throw new UnauthorizedException();
@@ -123,7 +125,9 @@ export class ForgotStrategy extends PassportStrategy(Strategy, 'forgot') {
     }
 
     try {
-      const manager = await this.managerService.getManagerByIdOrEmail(payload.id);
+      const manager = await this.managerService.getManagerByIdOrEmail(
+        payload.id,
+      );
 
       if (!manager) {
         throw new UnauthorizedException();

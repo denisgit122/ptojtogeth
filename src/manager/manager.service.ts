@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PasswordService, PrismaService } from '../core';
+import {PasswordService, PrismaService, selectFieldsOfManager} from '../core';
 import { CreateManagerDto, UpdateManagerDto } from './dto';
-import { IManager } from './interface';
+import {IManager, IStatistic} from './interface';
 import { isEmail } from 'class-validator';
 import { EStatus, OrderService } from '../order';
 import { User } from '@prisma/client';
@@ -17,15 +17,7 @@ export class ManagerService {
   async getManagersList(): Promise<IManager[]> {
     return this.prismaService.user.findMany({
       where: { role: 'manager' },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        email: true,
-        status: true,
-        is_active: true,
-        last_login: true,
-      },
+      select: selectFieldsOfManager
     });
   }
 
@@ -34,15 +26,7 @@ export class ManagerService {
       where: {
         id,
       },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        email: true,
-        last_login: true,
-        status: true,
-        is_active: true,
-      },
+      select: selectFieldsOfManager
     });
   }
 
@@ -79,15 +63,7 @@ export class ManagerService {
           surname: manager.surname,
           email: manager.email.toLowerCase(),
         },
-        select: {
-          id: true,
-          name: true,
-          surname: true,
-          email: true,
-          last_login: true,
-          status: true,
-          is_active: true,
-        },
+        select: selectFieldsOfManager
       });
     }
   }
@@ -118,44 +94,26 @@ export class ManagerService {
     return this.prismaService.user.update({
       where: { id: managerId },
       data: updateData,
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        email: true,
-        last_login: true,
-        status: true,
-        is_active: true,
-      },
+      select: selectFieldsOfManager
     });
   }
 
-  async getStatisticOnManager(managerId: string) {
+  async countOrdersForManager(id: string, status?: string): Promise<number> {
+    return this.orderService.countOrders({managerId: id, status})
+  }
+
+  async getStatisticOnManager(managerId: string): Promise<IStatistic> {
     const manager = await this.getManagerByIdOrEmail(managerId);
 
     if (!manager) {
       throw new HttpException('Manager not found', HttpStatus.NOT_FOUND);
     }
 
-    const ordersWithManager = await this.orderService.countOrders({
-      managerId: manager.id,
-    });
-    const inWorkOrdersWithManager = await this.orderService.countOrders({
-      managerId: manager.id,
-      status: EStatus.IN_WORK,
-    });
-    const dubbingOrdersWithManager = await this.orderService.countOrders({
-      managerId: manager.id,
-      status: EStatus.DUBBING,
-    });
-    const agreeOrdersWithManager = await this.orderService.countOrders({
-      managerId: manager.id,
-      status: EStatus.AGREE,
-    });
-    const disagreeOrdersWithManager = await this.orderService.countOrders({
-      managerId: manager.id,
-      status: EStatus.DISAGREE,
-    });
+    const ordersWithManager = await this.countOrdersForManager(managerId);
+    const inWorkOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.IN_WORK);
+    const dubbingOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.DUBBING);
+    const agreeOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.AGREE);
+    const disagreeOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.DISAGREE);
 
     return {
       total: ordersWithManager,

@@ -23,11 +23,6 @@ import { OrderModule, OrderService } from '../order';
     }),
   ],
   controllers: [ManagerController],
-  providers: [
-    PrismaService,
-    ManagerService,
-    PasswordService,
-    OrderService,
-  ],
+  providers: [PrismaService, ManagerService, PasswordService, OrderService],
 })
 export class ManagerModule {}

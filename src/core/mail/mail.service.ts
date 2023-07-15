@@ -21,10 +21,7 @@ export class MailService {
     });
   }
 
-  async sendManagerForgotPassword(
-    manager: User,
-    token: string,
-  ): Promise<void> {
+  async sendManagerForgotPassword(manager: User, token: string): Promise<void> {
     const url = `${process.env.FRONT_URL}/forgot/password?token=${token}`;
 
     await this.mailerService.sendMail({
