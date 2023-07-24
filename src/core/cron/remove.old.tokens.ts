@@ -19,7 +19,7 @@ export class CronJobsService {
 
         const tokensToDelete = tokens.filter((token) => {
             const createdAtDate = dayjs.utc(token.createdAt);
-            return createdAtDate.isBefore(currentDate.subtract(1, 'day'));
+            return createdAtDate.isBefore(currentDate.subtract(1, 'month'));
         })
 
         if (tokensToDelete.length > 0) {
