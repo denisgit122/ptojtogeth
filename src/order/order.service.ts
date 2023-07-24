@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {Comment, Group, Order} from '@prisma/client';
-import {PrismaService, selectFieldsOfOrder} from '../core';
+import { Comment, Group, Order } from '@prisma/client';
+import { PrismaService, selectFieldsOfOrder } from '../core';
 import { PaginateQuery } from 'nestjs-paginate';
 import { AddCommentDto, CreateGroupDto, UpdateOrderDto } from './dto';
 import { OrderEntity } from './order.entity';
 import { EStatus, ICustomPaginated, IStatistic } from './interface';
 import * as moment from 'moment';
-import {isEmail} from "class-validator";
+import { isEmail } from 'class-validator';
 
 @Injectable()
 export class OrderService {
@@ -112,7 +112,7 @@ export class OrderService {
   async getOrderById(orderId: string) {
     return this.prismaService.order.findFirst({
       where: { id: orderId },
-      select: selectFieldsOfOrder
+      select: selectFieldsOfOrder,
     });
   }
 
@@ -187,7 +187,7 @@ export class OrderService {
       return this.prismaService.order.update({
         where: { id: orderId },
         data: updateData,
-        select: selectFieldsOfOrder
+        select: selectFieldsOfOrder,
       });
     }
   }
@@ -299,7 +299,7 @@ export class OrderService {
   async getOrdersFromManagerById(managerId: string) {
     return this.prismaService.order.findMany({
       where: { managerId },
-      select: selectFieldsOfOrder
+      select: selectFieldsOfOrder,
     });
   }
 }

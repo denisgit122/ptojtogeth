@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {PasswordService, PrismaService, selectFieldsOfManager} from '../core';
+import { PasswordService, PrismaService, selectFieldsOfManager } from '../core';
 import { CreateManagerDto, UpdateManagerDto } from './dto';
-import {IManager, IStatistic} from './interface';
+import { IManager, IStatistic } from './interface';
 import { isEmail } from 'class-validator';
 import { EStatus, OrderService } from '../order';
 import { User } from '@prisma/client';
@@ -17,7 +17,7 @@ export class ManagerService {
   async getManagersList(): Promise<IManager[]> {
     return this.prismaService.user.findMany({
       where: { role: 'manager' },
-      select: selectFieldsOfManager
+      select: selectFieldsOfManager,
     });
   }
 
@@ -26,7 +26,18 @@ export class ManagerService {
       where: {
         id,
       },
-      select: selectFieldsOfManager
+      select: selectFieldsOfManager,
+    });
+  }
+
+  async getManagerByToken(token: string) {
+    return this.prismaService.token.findFirst({
+      where: { accessToken: `Bearer ${token}` },
+      select: {
+        user: {
+          select: selectFieldsOfManager,
+        },
+      },
     });
   }
 
@@ -63,7 +74,7 @@ export class ManagerService {
           surname: manager.surname,
           email: manager.email.toLowerCase(),
         },
-        select: selectFieldsOfManager
+        select: selectFieldsOfManager,
       });
     }
   }
@@ -94,12 +105,12 @@ export class ManagerService {
     return this.prismaService.user.update({
       where: { id: managerId },
       data: updateData,
-      select: selectFieldsOfManager
+      select: selectFieldsOfManager,
     });
   }
 
   async countOrdersForManager(id: string, status?: string): Promise<number> {
-    return this.orderService.countOrders({managerId: id, status})
+    return this.orderService.countOrders({ managerId: id, status });
   }
 
   async getStatisticOnManager(managerId: string): Promise<IStatistic> {
@@ -110,10 +121,22 @@ export class ManagerService {
     }
 
     const ordersWithManager = await this.countOrdersForManager(managerId);
-    const inWorkOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.IN_WORK);
-    const dubbingOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.DUBBING);
-    const agreeOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.AGREE);
-    const disagreeOrdersWithManager = await this.countOrdersForManager(managerId, EStatus.DISAGREE);
+    const inWorkOrdersWithManager = await this.countOrdersForManager(
+      managerId,
+      EStatus.IN_WORK,
+    );
+    const dubbingOrdersWithManager = await this.countOrdersForManager(
+      managerId,
+      EStatus.DUBBING,
+    );
+    const agreeOrdersWithManager = await this.countOrdersForManager(
+      managerId,
+      EStatus.AGREE,
+    );
+    const disagreeOrdersWithManager = await this.countOrdersForManager(
+      managerId,
+      EStatus.DISAGREE,
+    );
 
     return {
       total: ordersWithManager,

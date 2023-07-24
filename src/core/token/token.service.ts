@@ -1,10 +1,15 @@
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { EActionTokenType } from './interface';
+import { PrismaService } from '../orm';
+import { Action, Token } from '@prisma/client';
 
 @Injectable()
 export class TokenService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async generateTokenPair(id: string) {
     const accessToken = await this.jwtService.sign(
@@ -47,5 +52,21 @@ export class TokenService {
       { id, strategy: tokenType },
       { secret, expiresIn },
     );
+  }
+
+  async getTokenPairByRefreshToken(refreshToken: string): Promise<Token> {
+    return this.prismaService.token.findFirst({
+      where: {
+        refreshToken,
+      },
+    });
+  }
+
+  async getActionTokenByTokenFromQuery(token: string): Promise<Action> {
+    return this.prismaService.action.findFirst({
+      where: {
+        actionToken: token,
+      },
+    });
   }
 }

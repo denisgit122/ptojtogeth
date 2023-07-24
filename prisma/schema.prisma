@@ -63,6 +63,29 @@ model User {
   is_active  Boolean?  @default(false)
   last_login DateTime?
   Order      Order[]
+  Token      Token[]
+  Action     Action[]
 
   @@map(name: "users")
+}
+
+model Token {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessToken  String
+  refreshToken String
+  userId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime
+
+  @@map(name: "tokens")
+}
+
+model Action {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  actionToken String
+  tokenType   String
+  userId      String @db.ObjectId
+  user        User   @relation(fields: [userId], references: [id])
+
+  @@map(name: "action_tokens")
 }
