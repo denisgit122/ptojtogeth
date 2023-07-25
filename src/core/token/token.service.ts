@@ -7,30 +7,30 @@ import { Action, Token } from '@prisma/client';
 @Injectable()
 export class TokenService {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly prismaService: PrismaService,
+      private readonly jwtService: JwtService,
+      private readonly prismaService: PrismaService,
   ) {}
 
   async generateTokenPair(id: string) {
     const accessToken = await this.jwtService.sign(
-      { id, strategy: 'access' },
-      {
-        expiresIn: '1m',
-        secret: process.env.SECRET_ACCESS_WORD,
-      },
+        { id, strategy: 'access' },
+        {
+          expiresIn: '10m',
+          secret: process.env.SECRET_ACCESS_WORD,
+        },
     );
 
     const refreshToken = await this.jwtService.sign(
-      { id, strategy: 'refresh' },
-      {
-        expiresIn: '2m',
-        secret: process.env.SECRET_REFRESH_WORD,
-      },
+        { id, strategy: 'refresh' },
+        {
+          expiresIn: '20m',
+          secret: process.env.SECRET_REFRESH_WORD,
+        },
     );
 
     return {
-      accessToken: `Bearer ${accessToken}`,
-      refreshToken: `Bearer ${refreshToken}`,
+      accessToken: Bearer ${accessToken},
+      refreshToken: Bearer ${refreshToken},
     };
   }
 
@@ -49,8 +49,8 @@ export class TokenService {
         break;
     }
     return this.jwtService.sign(
-      { id, strategy: tokenType },
-      { secret, expiresIn },
+        { id, strategy: tokenType },
+        { secret, expiresIn },
     );
   }
 
