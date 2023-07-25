@@ -11,9 +11,10 @@ import {
   ITokenPair,
   MailService,
   PasswordService,
+  PrismaService,
   TokenService,
 } from '../core';
-import { EStatusManager, IManager, ManagerService } from '../manager';
+import { EStatusManager, ManagerService } from '../manager';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     private readonly passwordService: PasswordService,
     private readonly managerService: ManagerService,
     private readonly tokenService: TokenService,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async login(loginBody: LoginDto): Promise<ITokenPair> {
@@ -57,11 +59,37 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
-    return this.tokenService.generateTokenPair(manager.id);
+    const tokenPair = await this.tokenService.generateTokenPair(manager.id);
+
+    await this.prismaService.token.create({
+      data: {
+        userId: manager.id,
+        createdAt: new Date(),
+        ...tokenPair,
+      },
+    });
+
+    return tokenPair;
   }
 
-  async refresh(id: string): Promise<ITokenPair> {
-    return this.tokenService.generateTokenPair(id);
+  async refresh(id: string, refreshToken: string): Promise<ITokenPair> {
+    const tokenPair = await this.tokenService.generateTokenPair(id);
+    const token = await this.tokenService.getTokenPairByRefreshToken(
+      refreshToken,
+    );
+
+    if (!token) {
+      throw new HttpException('Token not found', HttpStatus.NOT_FOUND);
+    }
+
+    await Promise.all([
+      this.prismaService.token.create({
+        data: { userId: id, createdAt: new Date(), ...tokenPair },
+      }),
+      this.prismaService.token.delete({ where: { id: token.id } }),
+    ]);
+
+    return tokenPair;
   }
 
   async sendActivateToken(email: string): Promise<void> {
@@ -87,11 +115,26 @@ export class AuthService {
       EActionTokenType.activate,
     );
 
+    await this.prismaService.action.create({
+      data: {
+        actionToken: activateToken,
+        tokenType: EActionTokenType.activate,
+        userId: manager.id,
+      },
+    });
+
     await this.mailService.sendManagerActivate(manager, activateToken);
   }
 
-  async activate(id: string, password: string): Promise<IManager> {
-    return this.managerService.updateManager(id, { password, is_active: true });
+  async activate(id: string, password: string, token: string): Promise<void> {
+    const actionToken = await this.prismaService.action.findFirst({
+      where: { actionToken: token },
+    });
+
+    await Promise.all([
+      this.managerService.updateManager(id, { password, is_active: true }),
+      this.prismaService.action.delete({ where: { id: actionToken.id } }),
+    ]);
   }
 
   async changePassword(
@@ -132,6 +175,14 @@ export class AuthService {
       EActionTokenType.forgot,
     );
 
+    await this.prismaService.action.create({
+      data: {
+        actionToken: forgotPasswordToken,
+        tokenType: EActionTokenType.forgot,
+        userId: manager.id,
+      },
+    });
+
     await this.mailService.sendManagerForgotPassword(
       manager,
       forgotPasswordToken,
@@ -141,8 +192,12 @@ export class AuthService {
   async setForgotPassword(
     id: string,
     password: string,
+    token: string,
   ): Promise<HttpException> {
     const manager = await this.managerService.getManagerByIdOrEmail(id);
+    const actionToken = await this.tokenService.getActionTokenByTokenFromQuery(
+      token,
+    );
 
     const passwordMatched = await this.passwordService.comparePasswords(
       password,
@@ -155,7 +210,10 @@ export class AuthService {
       );
     }
 
-    await this.managerService.updateManager(id, { password });
+    await Promise.all([
+      this.managerService.updateManager(id, { password }),
+      this.prismaService.action.delete({ where: { id: actionToken.id } }),
+    ]);
 
     return new HttpException('The password has been changed', HttpStatus.OK);
   }

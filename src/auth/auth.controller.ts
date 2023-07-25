@@ -7,6 +7,7 @@ import {
   UseGuards,
   Req,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -51,7 +52,9 @@ export class AuthController {
   @UseGuards(AuthGuard('refresh'))
   @ApiBearerAuth()
   async refresh(@Req() req: any, @Res() res: any, @User() user: any) {
-    const tokenPair = await this.authService.refresh(user.id);
+    const token = req.headers['authorization'];
+
+    const tokenPair = await this.authService.refresh(user.id, token);
 
     return res.status(HttpStatus.OK).json({ tokenPair });
   }
@@ -81,10 +84,11 @@ export class AuthController {
     @Res() res: any,
     @User() user: any,
     @Body() body: PasswordDto,
+    @Query('token') token: string,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.authService.activate(user.id, body.password));
+      .json(await this.authService.activate(user.id, body.password, token));
   }
 
   @Post('change/password')
@@ -129,9 +133,12 @@ export class AuthController {
     @Res() res: any,
     @User() user: any,
     @Body() body: PasswordDto,
+    @Query('token') token: string,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.authService.setForgotPassword(user.id, body.password));
+      .json(
+        await this.authService.setForgotPassword(user.id, body.password, token),
+      );
   }
 }

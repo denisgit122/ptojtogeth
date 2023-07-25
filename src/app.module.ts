@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderModule, OrderController, OrderService } from './order';
 import {
+  CronJobsService,
   MailModule,
   MailService,
   PasswordModule,
@@ -25,6 +26,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AdminController, AdminModule, AdminService } from './admin';
 import { PassportModule } from '@nestjs/passport';
 import { ManagerController, ManagerModule, ManagerService } from './manager';
+import {ScheduleModule} from "@nestjs/schedule";
 
 @Module({
   imports: [
@@ -61,6 +63,7 @@ import { ManagerController, ManagerModule, ManagerService } from './manager';
     AdminModule,
     TokenModule,
     MailModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [
     AppController,
@@ -83,6 +86,7 @@ import { ManagerController, ManagerModule, ManagerService } from './manager';
     ActivateStrategy,
     TokenService,
     ForgotStrategy,
+    CronJobsService
   ],
 })
 export class AppModule {}

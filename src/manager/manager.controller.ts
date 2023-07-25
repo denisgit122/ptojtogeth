@@ -52,6 +52,20 @@ export class ManagerController {
       .json(await this.managerService.createManager(body));
   }
 
+  @ApiParam({ name: 'token', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @Get('token/:token')
+  async getManagerByToken(
+    @Req() req: any,
+    @Res() res: any,
+    @Param('token') token: string,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.managerService.getManagerByToken(token));
+  }
+
   @ApiParam({ name: 'managerId', required: true })
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
