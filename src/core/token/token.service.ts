@@ -10,7 +10,7 @@ export class TokenService {
     const accessToken = await this.jwtService.sign(
       { id, strategy: 'access' },
       {
-        expiresIn: '10m',
+        expiresIn: '1m',
         secret: process.env.SECRET_ACCESS_WORD,
       },
     );
@@ -18,7 +18,7 @@ export class TokenService {
     const refreshToken = await this.jwtService.sign(
       { id, strategy: 'refresh' },
       {
-        expiresIn: '20m',
+        expiresIn: '2m',
         secret: process.env.SECRET_REFRESH_WORD,
       },
     );
