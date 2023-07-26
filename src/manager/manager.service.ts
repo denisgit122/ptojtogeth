@@ -30,17 +30,6 @@ export class ManagerService {
     });
   }
 
-  async getManagerByToken(token: string) {
-    return this.prismaService.token.findFirst({
-      where: { accessToken: `Bearer ${token}` },
-      select: {
-        user: {
-          select: selectFieldsOfManager,
-        },
-      },
-    });
-  }
-
   async getManagerByIdOrEmail(identifier: string): Promise<User | null> {
     let manager: User | null = null;
 
