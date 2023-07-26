@@ -66,6 +66,9 @@ const authService = {
 
     forgotPasswordPut:(token,password)=> axiosService.put(urlsAuth.auth.forgotPassword, { password},{params:{token}}),
 
+    addPassword:(email)=> axiosService.post(urlsAuth.auth.addPassword, email),
+    addPasswordPut:(token,password)=> axiosService.put(urlsAuth.auth.addPassword, { password},{params:{token}}),
+
 }
 export {
     authService

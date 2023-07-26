@@ -5,9 +5,7 @@ import css from './Login.module.css'
 import {useNavigate} from "react-router-dom";
 import {loginValidator} from "../../validators";
 import {useState} from "react";
-import {authService} from "../../services";
-import {managerAction} from "../../redux/slices/manager.slice";
-import {useDispatch, useSelector} from "react-redux";
+import {authService, managerService} from "../../services";
 
 const LoginPage = () => {
     const {handleSubmit, register, reset, formState:{errors, isValid} } = useForm(
@@ -17,6 +15,13 @@ const LoginPage = () => {
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
+    const access = authService.getAccessToken();
+
+    if (access){
+        const token = access.replace('Bearer', '')
+        console.log(token);
+        managerService.getByToken(access.replace('Bearer ', '')).then(({data})=> data?.user.email === 'admin@gmail.com' ? navigate('/orders') : navigate('/'))
+    }
 
     const login = async (cred) => {
 

@@ -1,10 +1,10 @@
-import css from './AdminPanel.module.css';
 import {useState} from "react";
+import {useDispatch} from "react-redux";
+
+import css from './AdminPanel.module.css';
 import {ManagerDescription} from "../Admin/ManagerDescription/ManagerDescription";
 import {ButtonAdmin} from "../Admin/ButtonAdmin/ButtonAdmin";
-import {useDispatch} from "react-redux";
 import {managerAction} from "../../redux/slices/manager.slice";
-import {useNavigate} from "react-router-dom";
 import {authAction} from "../../redux/slices/auth.slice";
 
 const AdminPanel = ({manager}) => {
@@ -13,12 +13,12 @@ const AdminPanel = ({manager}) => {
     const [cop, setCoty] = useState(false);
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const addPassword = () => {
 
-        if (manager.password === null) {
-            navigate(`/adminPanel/${manager.id.toString()}`)
+        if (manager.active === false) {
+            dispatch(authAction.addPassword({email: manager.email}))
+            alert('We have send you a confirmation email');
         } else {
             setCoty(true)
 
@@ -30,7 +30,7 @@ const AdminPanel = ({manager}) => {
     const ban = () => {
         if (manager.status === "unbanned"){
 
-            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "banned", is_active: false}}))
+            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "banned", is_active: true}}))
         }
 
     };
@@ -38,7 +38,7 @@ const AdminPanel = ({manager}) => {
     const unban = () => {
         if (manager.status === "banned"){
 
-            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "unbanned", is_active: true}}))
+            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "unbanned", is_active: false}}))
         }
 
     };

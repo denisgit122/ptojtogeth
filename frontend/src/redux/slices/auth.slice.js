@@ -31,6 +31,31 @@ const forgotPasswordPut = createAsyncThunk(
         }
     }
 )
+const addPasswordPut = createAsyncThunk(
+    "managerSlice/addPasswordPut",
+    async ({token, password},thunkAPI ) => {
+
+        try {
+            const {data} = await authService.addPasswordPut(token, password);
+
+            return data;
+        }catch (e) {
+            return thunkAPI.rejectWithValue(e.response.data);
+        }
+    }
+)
+const addPassword = createAsyncThunk(
+    "managerSlice/addPassword",
+    async (email,thunkAPI ) => {
+        try {
+            const {data} = await authService.addPassword(email);
+
+            return data;
+        }catch (e) {
+            return thunkAPI.rejectWithValue(e.response.data);
+        }
+    }
+)
 const authSlice = createSlice({
     name: "authSlice",
     initialState,
@@ -41,7 +66,9 @@ const {reducer: authReducer} = authSlice;
 
 const authAction = {
     forgotPassword,
-    forgotPasswordPut
+    forgotPasswordPut,
+    addPassword,
+    addPasswordPut,
 }
 export {
     authReducer,

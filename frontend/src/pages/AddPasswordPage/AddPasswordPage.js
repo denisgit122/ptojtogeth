@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
 
 import css from './AddPasswordPage.module.css'
@@ -8,13 +8,12 @@ import {passwordValidator} from "../../validators";
 import {useState} from "react";
 import {managerAction} from "../../redux/slices/manager.slice";
 import {Loader} from "../../components";
+import {authAction} from "../../redux/slices/auth.slice";
 
 const AddPasswordPage = () => {
     const {handleSubmit, register, reset, formState:{errors, isValid} } = useForm(
         {mode:"onTouched", resolver: joiResolver(passwordValidator)}
     )
-
-    const {id} = useParams();
 
     const [error, setError] = useState(null);
 
@@ -23,12 +22,15 @@ const AddPasswordPage = () => {
 
     const [loader, setLoader] = useState(false);
 
+    const location = useLocation();
+    const token = location.search?.split("=")[1];
+
     const addPassword = async (cred) => {
 
         try {
             if (cred.password === cred.RepPassword){
+                dispatch(authAction.addPasswordPut( {token, password: cred.password}));
 
-                dispatch(managerAction.updateManager({id, manager:{password: cred.password}}));
                 setLoader(true);
 
                 setTimeout(()=>{

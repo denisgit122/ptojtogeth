@@ -9,9 +9,9 @@ import { User } from '@prisma/client';
 @Injectable()
 export class ManagerService {
   constructor(
-      private readonly prismaService: PrismaService,
-      private readonly passwordService: PasswordService,
-      private readonly orderService: OrderService,
+    private readonly prismaService: PrismaService,
+    private readonly passwordService: PasswordService,
+    private readonly orderService: OrderService,
   ) {}
 
   async getManagersList(): Promise<IManager[]> {
@@ -32,7 +32,7 @@ export class ManagerService {
 
   async getManagerByToken(token: string) {
     return this.prismaService.token.findFirst({
-      where: { accessToken: Bearer ${token} },
+      where: { accessToken: `Bearer ${token}` },
       select: {
         user: {
           select: selectFieldsOfManager,
@@ -64,8 +64,8 @@ export class ManagerService {
   async createManager(manager: CreateManagerDto): Promise<IManager> {
     if (await this.getManagerByIdOrEmail(manager.email)) {
       throw new HttpException(
-          'Email is already in use.',
-          HttpStatus.BAD_REQUEST,
+        'Email is already in use.',
+        HttpStatus.BAD_REQUEST,
       );
     } else {
       return this.prismaService.user.create({
@@ -80,8 +80,8 @@ export class ManagerService {
   }
 
   async updateManager(
-      managerId: string,
-      managerData: UpdateManagerDto,
+    managerId: string,
+    managerData: UpdateManagerDto,
   ): Promise<IManager> {
     let password;
 
@@ -122,20 +122,20 @@ export class ManagerService {
 
     const ordersWithManager = await this.countOrdersForManager(managerId);
     const inWorkOrdersWithManager = await this.countOrdersForManager(
-        managerId,
-        EStatus.IN_WORK,
+      managerId,
+      EStatus.IN_WORK,
     );
     const dubbingOrdersWithManager = await this.countOrdersForManager(
-        managerId,
-        EStatus.DUBBING,
+      managerId,
+      EStatus.DUBBING,
     );
     const agreeOrdersWithManager = await this.countOrdersForManager(
-        managerId,
-        EStatus.AGREE,
+      managerId,
+      EStatus.AGREE,
     );
     const disagreeOrdersWithManager = await this.countOrdersForManager(
-        managerId,
-        EStatus.DISAGREE,
+      managerId,
+      EStatus.DISAGREE,
     );
 
     return {

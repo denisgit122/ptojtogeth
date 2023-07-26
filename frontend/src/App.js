@@ -22,8 +22,6 @@ function App() {
           <Route element={<HeaderLayots/>}>
             <Route path={"/orders"} element={<UserPage/>}/>
             <Route path={"/adminPanel"} element={<AdminPanelPage/>}/>
-            <Route path={"/adminPanel/:id"} element={<AddPasswordPage/>}/>
-
           </Route>
 
           <Route element={<HeaderLayotsManager/>}>
@@ -32,6 +30,7 @@ function App() {
 
 
           <Route path={"/forgot/password"} element={<ForgotPasswordPage/>}/>
+          <Route path={"/activate"} element={<AddPasswordPage/>}/>
 
           <Route path={'*'} element={<NotFoundPage/>}/>
 

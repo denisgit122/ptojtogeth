@@ -5,6 +5,8 @@ const urlsAuth ={
         login: '/auth/login',
         refresh : '/auth/refresh',
         forgotPassword: `/auth/forgot/password`,
+        addPassword : '/auth/activate',
+
     }
 
 }
@@ -29,6 +31,7 @@ const urlsManager = {
         gerAll: '/managers',
         create: '/managers/create',
         update:(id)=> `/managers/${id}`,
+        getByToken:(token)=> `/managers/token/${token}`
     }
 }
 export {urlsAuth, urlsOrders, urlsGroup, urlsManager, baseURL}
