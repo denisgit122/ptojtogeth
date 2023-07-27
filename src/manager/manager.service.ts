@@ -22,12 +22,18 @@ export class ManagerService {
   }
 
   async getManagerById(id: string): Promise<IManager> {
-    return this.prismaService.user.findFirst({
+    const user = await this.prismaService.user.findFirst({
       where: {
         id,
       },
       select: selectFieldsOfManager,
     });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   async getManagerByIdOrEmail(identifier: string): Promise<User | null> {

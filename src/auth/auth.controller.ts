@@ -52,10 +52,7 @@ export class AuthController {
   @UseGuards(AuthGuard('refresh'))
   @ApiBearerAuth()
   async refresh(@Req() req: any, @Res() res: any, @User() user: any) {
-    const token = req.headers['authorization'];
-
-    const tokenPair = await this.authService.refresh(user.id, token);
-
+    const tokenPair = await this.authService.refresh(user.id);
     return res.status(HttpStatus.OK).json({ tokenPair });
   }
 
