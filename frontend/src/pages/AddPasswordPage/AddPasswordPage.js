@@ -1,12 +1,11 @@
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 
 import css from './AddPasswordPage.module.css'
 import {passwordValidator} from "../../validators";
 import {useState} from "react";
-import {managerAction} from "../../redux/slices/manager.slice";
 import {Loader} from "../../components";
 import {authAction} from "../../redux/slices/auth.slice";
 

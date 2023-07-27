@@ -22,7 +22,7 @@ import { CreateManagerDto, UpdateManagerDto } from './dto';
 import { TrimPipe } from '../core';
 import { AdminAuthGuard } from '../admin';
 import { AuthGuard } from '@nestjs/passport';
-import {User} from "../auth/user.decorator";
+import { User } from '../auth/user.decorator';
 
 @ApiTags('Managers')
 @Controller('managers')
@@ -59,11 +59,7 @@ export class ManagerController {
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @Get('token')
-  async getManagerByToken(
-    @Req() req: any,
-    @Res() res: any,
-    @User() user: any
-  ) {
+  async getManagerByToken(@Req() req: any, @Res() res: any, @User() user: any) {
     return res
       .status(HttpStatus.OK)
       .json(await this.managerService.getManagerById(user.id));

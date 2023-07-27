@@ -31,7 +31,7 @@ const urlsManager = {
         gerAll: '/managers',
         create: '/managers/create',
         update:(id)=> `/managers/${id}`,
-        getByToken:(token)=> `/managers/token/${token}`
+        getByToken: `/managers/token`
     }
 }
 export {urlsAuth, urlsOrders, urlsGroup, urlsManager, baseURL}

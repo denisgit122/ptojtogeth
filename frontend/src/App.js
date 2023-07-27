@@ -1,9 +1,7 @@
 import {Routes, Route, Navigate} from 'react-router-dom'
 
-import {AdminPanelPage, ForgotPasswordPage, LoginPage, NotFoundPage, UserPage, UserPageManager} from "./pages";
-import {HeaderLayots} from "./layouts/HeaderLayots/HeaderLayots";
-import {AddPasswordPage} from "./pages/AddPasswordPage/AddPasswordPage";
-import {HeaderLayotsManager} from "./layouts";
+import {AdminPanelPage, ForgotPasswordPage, LoginPage, NotFoundPage, UserPage, UserPageManager, AddPasswordPage} from "./pages";
+import {HeaderLayots, HeaderLayotsManager } from "./layouts";
 
 function App() {
 

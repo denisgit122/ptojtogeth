@@ -16,11 +16,21 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
     const access = authService.getAccessToken();
+    const manager = localStorage.getItem('manager');
 
     if (access){
         const token = access.replace('Bearer', '')
-        console.log(token);
-        managerService.getByToken(access.replace('Bearer ', '')).then(({data})=> data?.user.email === 'admin@gmail.com' ? navigate('/orders') : navigate('/'))
+
+        if (localStorage.getItem('manager') === "manager"){
+            setTimeout(()=> navigate('/manager'), 10 )
+
+            console.log(manager)
+        }else if (localStorage.getItem('manager') === "admin"){
+           setTimeout(()=> navigate('/orders'), 10 )
+            console.log(manager)
+
+        }
+        // managerService.getByToken(access.replace('Bearer ', '')).then(({data})=> data?.user.email === 'admin@gmail.com' ? navigate('/orders') : navigate('/'))
     }
 
     const login = async (cred) => {
@@ -28,10 +38,13 @@ const LoginPage = () => {
         try {
 
             await authService.login(cred);
-            if (cred.email === 'admin@gmail.com'){
+            if (cred.email === "admin@gmail.com"){
                 navigate("/orders")
+                localStorage.setItem('manager', "admin")
             } else {
-                navigate("/manager")
+                navigate("/manager");
+                localStorage.setItem('manager', "manager")
+
             }
 
 

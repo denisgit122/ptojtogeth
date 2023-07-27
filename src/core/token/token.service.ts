@@ -23,7 +23,7 @@ export class TokenService {
     const refreshToken = await this.jwtService.sign(
       { id, strategy: 'refresh' },
       {
-        expiresIn: '2m',
+        expiresIn: '3m',
         secret: process.env.SECRET_REFRESH_WORD,
       },
     );
