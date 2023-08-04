@@ -72,22 +72,12 @@ export class AuthService {
     return tokenPair;
   }
 
-  async refresh(id: string, refreshToken: string): Promise<ITokenPair> {
+  async refresh(id: string): Promise<ITokenPair> {
     const tokenPair = await this.tokenService.generateTokenPair(id);
-    const token = await this.tokenService.getTokenPairByRefreshToken(
-      refreshToken,
-    );
 
-    if (!token) {
-      throw new HttpException('Token not found', HttpStatus.NOT_FOUND);
-    }
-
-    await Promise.all([
-      this.prismaService.token.create({
+    await this.prismaService.token.create({
         data: { userId: id, createdAt: new Date(), ...tokenPair },
-      }),
-      this.prismaService.token.delete({ where: { id: token.id } }),
-    ]);
+      })
 
     return tokenPair;
   }

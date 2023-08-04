@@ -1,8 +1,9 @@
 import {baseURL, urlsAuth} from "../configs";
-import {axiosService} from "./axiosService";
+import {axiosService, history} from "./axiosService";
 
 const accessToken = "access";
 const refreshToken = "refresh";
+let error;
 
 const authService = {
 
@@ -16,6 +17,7 @@ const authService = {
     },
 
     refresh: async function() {
+
         const refreshTok = this.getRefreshToken();
 
 
@@ -25,23 +27,48 @@ const authService = {
 
         const url = baseURL + '/auth/refresh';
 
-        await fetch(url, {
+       const response = await fetch(url, {
             method: "POST",
             headers:{
                 'Content-Type': 'application/json',
                 'Authorization': refreshTok
             },
-        }).then((response)=>{
-            if (response.status === 200){
 
-                return response.json();
-
-            }else if (response.status === 401){
-
-                this.deletesToken();
-            }
-        }).then((data)=> this.setTokens(data))
+        })
+        const data = await response.json()
+        this.setTokens(data);
+        //     .then((response)=>{
+        //     if (response.status === 200){
+        //
+        //         return response.json();
+        //
+        //     }else if (response.status === 401){
+        //         error = response;
+        //         console.log(response)
+        //         return response.json();
+        //     }
+        // }).then((data)=> {
+        //     console.log(error)
+        //     // console.log(error?.status)
+        //     if (error?.status === 200 || !error){
+        //         console.log(12)
+        //         this.setTokens(data)
+        //     }if (error?.status === 401){
+        //         console.log(11)
+        //         return data
+        //     }
+            // return data;
+        // })
         // const data = await axiosService.post('/auth/refresh' , {},{headers:{Authorization: refreshTok}});
+        // if (response.status === 200){
+        //     console.log(data)
+        //     this.setTokens(data);
+        //
+        // } else if (response.statusText === 'Unauthorized') {
+        //     this.deletesToken()
+        //     history.replace('/')
+        //     // this.setTokens(null)
+        // }
 
     },
 

@@ -16,42 +16,82 @@ axiosService.interceptors.request.use((config)=>{
     return config
 });
 
+
+
 let isRefreshing = false;
+const waitList = [];
 
 axiosService.interceptors.response.use(config=>{
         return config;
     },
-    async (error)=>{
-
-        const refresh = authService.getRefreshToken();
-
-
-        if (error.response?.status === 401 && refresh&& !isRefreshing){
-            isRefreshing = true
-            try {
-                isRefreshing = false;
-                await authService.refresh();
-                return axiosService(error.config)
-
-                // return axiosService(error.config);
-
-            }catch (e) {
-                isRefreshing = false;
-                authService.deletesToken();
-                history.replace('/')
-                // return Promise.reject(error);
-                console.log(error)
-                return axiosService(error.config)
-
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401) {
+            if (!isRefreshing) {
+                isRefreshing = true
+                try {
+                    await authService.refresh();
+                    isRefreshing = false
+                    afterRefresh()
+                    return axiosService(originalRequest)
+                } catch (e) {
+                    authService.deletesToken();
+                    isRefreshing = false
+                    history.replace('/login?expSession=true')
+                    // return Promise.reject(error)
+                }
             }
 
-            return axiosService(error.config)
+            if (originalRequest.url === baseURL + '/auth/refresh') {
+                return Promise.reject(error)
+            }
+
+            return new Promise(resolve => {
+                subscribeToWaitList(() => resolve(axiosService(originalRequest)))
+                // const myFunc = ()=>{
+                //     resolve(axiosService(originalRequest))
+                // }
+                // subscribeToWaitList(myFunc)
+            })
+
         }
-
-        return Promise.reject(error);
-
+        return Promise.reject(error)
     }
+
+    // async (error)=>{
+    //
+    //     const refresh = authService.getRefreshToken();
+    //
+    //     if (error.response?.status === 401 && refresh&& !isRefreshing){
+    //         isRefreshing = true
+    //         try {
+    //             isRefreshing = false;
+    //             await authService.refresh();
+    //         }catch (e) {
+    //
+    //             isRefreshing = false;
+    //             history.replace('/');
+    //             authService.deletesToken();
+    //
+    //         }
+    //         // isRefreshing = false;
+    //         return axiosService(error.config)
+    //     }
+    //
+    //     return Promise.reject(error);
+    //
+    // }
 )
+const subscribeToWaitList = (cb) => {
+    waitList.push(cb)
+}
+
+const afterRefresh = () => {
+    while (waitList.length) {
+        const cb = waitList.pop();
+        cb()
+    }
+}
 export {
     axiosService,
     history
