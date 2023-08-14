@@ -142,6 +142,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
         }
 
     }
+
     if (orderPage?.length>25){
         if (sendMessage === true ){
 
@@ -247,7 +248,8 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
                                     (item) =>(
                                         <PaginationItem
                                             component={Link}
-                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}`}
+                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}${searchByEnd_date !== '' ? `&endDate=${searchByEnd_date}` : ''}${searchByEmail !== '' ? `&email=${searchByEmail}` : ''}${searchBySurname !== '' ? `&surname=${searchBySurname}` : ''}${searchByName !== '' ? `&name=${searchByName}` : ''}${searchByCourse !== '' ? `&course=${searchByCourse}` : ''}${searchByAge !== '' ? `&age=${searchByAge}` : ''}${searchByPhone !== '' ? `&phone=${searchByPhone}` : ''}${searchByStatus !== '' ? `&status=${searchByStatus}` : ''}${searchByCourse_type !== '' ? `&course_type=${searchByCourse_type}` : ''}${searchByCourse_format !== '' ? `course_format=${searchByCourse_format}` : ''}${searchByStart_date !== '' ? `&startDate=${searchByStart_date}` : ''}${searchByGroups !== '' ? `&groups=${searchByGroups}` : ''}
+                                          `}
                                             {...item}
                                         />
                                     )
