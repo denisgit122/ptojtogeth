@@ -62,14 +62,6 @@ const ForgotPasswordPage = () => {
 
                         <form onSubmit={handleSubmit(addPassword)}>
                             <div className={css.userBox}>
-                                <input type="password" {...register("RepPassword")}/>
-
-                                {error ?
-                                    <label>Invalid email </label>
-                                    : errors.RepPassword ? <span>{errors.RepPassword.message}</span> : <label>RepPassword</label>
-                                }
-                            </div>
-                            <div className={css.userBox}>
                                 <input type="password" {...register("password")}/>
 
                                 {error ?
@@ -78,6 +70,15 @@ const ForgotPasswordPage = () => {
                                 }
 
                             </div>
+                            <div className={css.userBox}>
+                                <input type="password" {...register("RepPassword")}/>
+
+                                {error ?
+                                    <label>Invalid email </label>
+                                    : errors.RepPassword ? <span>{errors.RepPassword.message}</span> : <label>RepPassword</label>
+                                }
+                            </div>
+
 
                             {isValid ?
                                 <button className={css.a}>Add Password</button> :

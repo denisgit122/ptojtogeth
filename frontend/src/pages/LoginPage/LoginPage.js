@@ -2,32 +2,34 @@ import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 
 import css from './Login.module.css'
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {loginValidator} from "../../validators";
 import {useState} from "react";
-import {authService, managerService} from "../../services";
+import {authService} from "../../services";
 
 const LoginPage = () => {
     const {handleSubmit, register, reset, formState:{errors, isValid} } = useForm(
         {mode:"onTouched", resolver: joiResolver(loginValidator)}
     )
 
-    const [error, setError] = useState(null);
+    const location = useLocation();
 
     const navigate = useNavigate();
     const access = authService.getAccessToken();
-    const manager = localStorage.getItem('manager');
+
+        if (location.pathname !== "/login" ){
+            navigate("/login")
+        }
+    const [error, setError] = useState(null);
+
 
     if (access){
-        const token = access.replace('Bearer', '')
 
         if (localStorage.getItem('manager') === "manager"){
             setTimeout(()=> navigate('/manager'), 10 )
 
-            console.log(manager)
         }else if (localStorage.getItem('manager') === "admin"){
            setTimeout(()=> navigate('/orders'), 10 )
-            console.log(manager)
 
         }
         // managerService.getByToken(access.replace('Bearer ', '')).then(({data})=> data?.user.email === 'admin@gmail.com' ? navigate('/orders') : navigate('/'))

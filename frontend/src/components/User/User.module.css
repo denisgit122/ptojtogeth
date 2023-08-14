@@ -9,6 +9,9 @@
     overflow: hidden;
     transition: .9s;
 }
+.headBox:hover{
+    background: linear-gradient(#333942, #2f3542);
+}
 .id{
     /*width: 7vw;*/
     margin-right: 1.2vw;

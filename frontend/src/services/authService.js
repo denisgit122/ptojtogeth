@@ -87,6 +87,10 @@ const authService = {
         localStorage.removeItem(refreshToken)
 
     },
+    deletesManagerLoc:()=>{
+        localStorage.removeItem('manager');
+
+    },
     isAuthenticated:()=> !!localStorage.getItem(accessToken),
 
     forgotPassword:(email)=> axiosService.post(urlsAuth.auth.forgotPassword, email),

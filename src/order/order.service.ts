@@ -27,66 +27,68 @@ export class OrderService {
       }));
 
     const where = {};
-    if (filter && Object.keys(filter).length > 0) {
-      Object.entries(filter).forEach(([key, value]) => {
-        let startDate;
-        let endDate;
+    if (filter) {
+      if (Object.keys(filter).length > 0) {
+        Object.entries(filter).forEach(([key, value]) => {
+          let startDate;
+          let endDate;
 
-        if (key === 'start_date') {
-          startDate = Array.isArray(value) ? moment(value[0]) : moment(value);
-        } else if (key === 'end_date') {
-          endDate = Array.isArray(value) ? moment(value[0]) : moment(value);
-        }
+          if (key === 'start_date') {
+            startDate = Array.isArray(value) ? moment(value[0]) : moment(value);
+          } else if (key === 'end_date') {
+            endDate = Array.isArray(value) ? moment(value[0]) : moment(value);
+          }
 
-        if (startDate) {
-          where['created_at'] = where['created_at'] || {};
-          where['created_at'].gte = startDate.toISOString();
-        }
+          if (startDate) {
+            where['created_at'] = where['created_at'] || {};
+            where['created_at'].gte = startDate.toISOString();
+          }
 
-        if (endDate) {
-          where['created_at'] = where['created_at'] || {};
-          where['created_at'].lte = endDate.toISOString();
-        }
+          if (endDate) {
+            where['created_at'] = where['created_at'] || {};
+            where['created_at'].lte = endDate.toISOString();
+          }
 
-        if (
-          key === 'name' ||
-          key === 'surname' ||
-          key === 'email' ||
-          key === 'phone'
-        ) {
-          where[key] = { contains: value, mode: 'insensitive' };
-        }
+          if (
+              key === 'name' ||
+              key === 'surname' ||
+              key === 'email' ||
+              key === 'phone'
+          ) {
+            where[key] = {contains: value, mode: 'insensitive'};
+          }
 
-        if (
-          key === 'course' ||
-          key === 'course_type' ||
-          key === 'course_format' ||
-          key === 'status' ||
-          key === 'group'
-        ) {
-          where[key] = { equals: value };
-        }
+          if (
+              key === 'course' ||
+              key === 'course_type' ||
+              key === 'course_format' ||
+              key === 'status' ||
+              key === 'group'
+          ) {
+            where[key] = {equals: value};
+          }
 
-        if (key === 'manager') {
-          where[key] = {
-            name: { equals: value },
-          };
-        }
-
-        if (key === 'age') {
-          if (Array.isArray(value)) {
-            const ages = value.map((ageStr) => parseInt(ageStr, 10));
+          if (key === 'manager') {
             where[key] = {
-              in: ages,
-            };
-          } else {
-            const age = parseInt(value, 10);
-            where[key] = {
-              equals: age,
+              name: {equals: value},
             };
           }
-        }
-      });
+
+          if (key === 'age') {
+            if (Array.isArray(value)) {
+              const ages = value.map((ageStr) => parseInt(ageStr, 10));
+              where[key] = {
+                in: ages,
+              };
+            } else {
+              const age = parseInt(value, 10);
+              where[key] = {
+                equals: age,
+              };
+            }
+          }
+        });
+      }
     }
 
     const totalCount = await this.countOrders();

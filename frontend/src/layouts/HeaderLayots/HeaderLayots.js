@@ -8,6 +8,10 @@ const HeaderLayots = () => {
 
     const manager = localStorage.getItem('manager');
 
+    if (!accessToken && manager === null){
+       setTimeout(() => navigate('/login'),10);
+    }
+
     return (
         manager === "admin" ?
             accessToken
@@ -16,7 +20,7 @@ const HeaderLayots = () => {
                     <Outlet/>
                 </div>
                 :
-                setTimeout(()=>navigate('/'), 10)
+                setTimeout(()=>navigate('/login'), 10)
         : manager === "manager" && setTimeout(()=>navigate('*'), 10)
 
     );
