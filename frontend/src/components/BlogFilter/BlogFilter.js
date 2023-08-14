@@ -10,6 +10,8 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
                         page, setSearchParams,nameQuery,surnameQuery, emailQuery, phoneQuery, ageQuery, end_dateQuery,
                         courseQuery, course_formatQuery, course_typeQuery, statusQuery, groupsQuery}) => {
 
+    const manager = localStorage.getItem('manager');
+
     const [searchByName, setSearchByName] = useState(nameQuery);
     const [searchBySurname, setSearchBySurname] = useState(surnameQuery);
     const [searchByEmail, setSearchByEmail] = useState(emailQuery);
@@ -245,8 +247,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
                                     (item) =>(
                                         <PaginationItem
                                             component={Link}
-                                            to={`/orders?page=${item.page}`}
-
+                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}`}
                                             {...item}
                                         />
                                     )

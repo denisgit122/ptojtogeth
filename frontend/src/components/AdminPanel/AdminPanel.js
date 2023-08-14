@@ -30,7 +30,7 @@ const AdminPanel = ({manager}) => {
     const ban = () => {
         if (manager.status === "unbanned"){
 
-            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "banned", is_active: true}}))
+            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "banned", is_active: true}, page:1}))
         }
 
     };
@@ -38,7 +38,7 @@ const AdminPanel = ({manager}) => {
     const unban = () => {
         if (manager.status === "banned"){
 
-            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "unbanned", is_active: false}}))
+            dispatch(managerAction.updateManager({id: manager.id, manager: {status: "unbanned", is_active: false}, page:1}))
         }
 
     };

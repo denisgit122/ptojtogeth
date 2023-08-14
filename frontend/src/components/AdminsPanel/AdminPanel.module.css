@@ -5,7 +5,7 @@
     width: 98.7vw;
     height: 100%;
     background: linear-gradient(#57606f, #2f3542);
-    z-index: -2;
+    /*z-index: -2;*/
 }
 
 .adminPanelBox{
@@ -77,4 +77,8 @@ h3{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.conteiner{
+    width: 98.8vw;
+    background: #57606f;
 }

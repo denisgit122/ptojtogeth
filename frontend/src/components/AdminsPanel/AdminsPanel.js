@@ -5,29 +5,53 @@ import {ModalCreate} from "../ModalCreate/ModalCreate";
 import {useDispatch, useSelector} from "react-redux";
 import {managerAction} from "../../redux/slices/manager.slice";
 import {Loader} from "../Loader/Loader";
+import {Container, Pagination, PaginationItem, Stack} from "@mui/material";
+import {Link, useLocation} from "react-router-dom";
 
 const AdminsPanel = () => {
+
+    const location = useLocation();
 
     const [length, setLength] = useState(0);
     const [modalActive, setModalActive] = useState(false);
     const [loader, setLoader] = useState(true);
 
+    const [manager, setManager] = useState();
+
+    const [pageQty, setPageQty] = useState(0);
+    const [page, setPage] = useState(parseInt(location.search?.split('=')[1]?.split('&')[0] || 1));
+
     const dispatch = useDispatch();
 
     const {managers} = useSelector(state => state.managers);
 
-    const banned = managers.filter(manager => manager.status === "banned");
-    const unbanned = managers.filter(manager => manager.status === "unbanned");
-    const is_activeFalse = managers.filter(manager => manager.is_active === false);
-    const is_activeTrue = managers.filter(manager => manager.is_active === true);
+
+    setTimeout(()=>{
+        setManager(managers.data);
+
+        setPageQty(managers.totalPages);
+        setLength(managers.totalCount);
+    },10)
 
     useEffect(() => {
         setLoader(true)
-        dispatch(managerAction.getManagers());
+        dispatch(managerAction.getManagers({page}));
 
-        setLength(managers.length);
+
         setTimeout(()=>setLoader(false), 1000)
-    }, [dispatch])
+    }, [dispatch, managers.totalCount, managers.totalPages, page]);
+
+    let banned = [];
+    let unbanned = [];
+    let is_activeFalse = [];
+    let is_activeTrue = [];
+
+    if (manager !== undefined){
+            banned = manager.filter(manager => manager.status === "banned");
+            unbanned = manager.filter(manager => manager.status === "unbanned");
+            is_activeFalse = manager.filter(manager => manager.is_active === false);
+            is_activeTrue =  manager.filter(manager => manager.is_active === true);
+    }
 
     return (
         <div className={css.box}>
@@ -59,11 +83,38 @@ const AdminsPanel = () => {
                     {
                         loader
                             ?<div className={css.boxLoader}><Loader/></div>
-                            : managers && managers.map((manager )=> <AdminPanel  key={manager.id} length={length} manager={manager}/>)
+                            : managers.data && managers.data.map((manager )=> <AdminPanel  key={manager.id} length={length} manager={manager}/>)
                     }
+                </div>
+                <div className={css.conteiner}>
+                    <Container>
+                        <Stack spacing={2}>
+                            {
+                                !!pageQty && (<Pagination
+                                    sx={{marginY:3, marginX: "auto"}}
+                                    count={pageQty}
+                                    page={page}
+                                    showFirstButton
+                                    showLastButton
+                                    onChange={(_, num) => setPage(num)}
+                                    renderItem={
+                                        (item) =>(
+                                            <PaginationItem
+                                                component={Link}
+                                                to={`/adminPanel?page=${item.page}`}
+                                                {...item}
+                                            />
+                                        )
+                                    }
+                                />)
+                            }
+
+                        </Stack>
+                    </Container>
                 </div>
 
             </div>
+
         </div>
 
     );

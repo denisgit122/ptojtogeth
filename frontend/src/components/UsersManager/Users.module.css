@@ -24,7 +24,13 @@ h3{
     height: 8vw;
     background: linear-gradient(#57606f, #2f3542);
 }
-
+.headBoxSearchOrder{
+    width: 100%;
+    margin-top: -1vw;
+    padding-top: 2vw;
+    height: 13vw;
+    background: linear-gradient(#57606f, #2f3542);
+}
 .headBox{
     display: flex;
     width: 100%;

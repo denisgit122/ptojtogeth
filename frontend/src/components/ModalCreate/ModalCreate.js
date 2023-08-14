@@ -15,7 +15,7 @@ const ModalCreate = ({active,setModalActive}) => {
 
     const create = (manager) =>{
         console.log(manager);
-        dispatch(managerAction.createManager(manager))
+        dispatch(managerAction.createManager({manager, page:1}))
         setModalActive(false)
         reset()
     }

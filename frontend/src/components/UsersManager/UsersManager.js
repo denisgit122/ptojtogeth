@@ -12,15 +12,18 @@ import {groupAction} from "../../redux/slices/group.slice";
 import {Loader} from "../Loader/Loader";
 
 const UsersManager = () => {
-
     const location = useLocation();
 
     const [page, setPage] = useState(parseInt(location.search?.split('=')[1]?.split('&')[0] || 1));
     const [name, setName] = useState( location.search?.split('=')[2]?.split('+') || null)
 
     const [order, setOrder] = useState(null);
+    const [orderPage, setOrderPage] = useState(null);
+
 
     const [pageQty, setPageQty] = useState(0);
+
+    const [resetForm, setResetForm] = useState(false);
 
     const dispatch = useDispatch();
     const {orders} = useSelector(state => state.orders);
@@ -45,6 +48,10 @@ const UsersManager = () => {
     const statusQuery = searchParams.get('status') || '';
     const groupsQuery = searchParams.get('groups') || '';
 
+    const start_dateQuery = searchParams.get('start_date') || '';
+    const end_dateQuery = searchParams.get('end_date') || '';
+
+
     useEffect(() => {
         setLoader(true);
 
@@ -59,7 +66,7 @@ const UsersManager = () => {
             dispatch(ordersAction.getAll({page, query: search}));
             const arg = search.split(':');
 
-            setSearchParams({page: page, sortBy: `${arg[0]} ${arg[1]}`});
+            setSearchParams({page, sortBy: `${arg[0]} ${arg[1]}`});
 
 
         }else if(name !== null){
@@ -67,7 +74,7 @@ const UsersManager = () => {
             if (name[1]==='asc' || name[1]==='desc'){
 
                 dispatch(ordersAction.getAll({page, query: `${name[0]}:${name[1]}` }));
-                setSearchParams({page: page, sortBy: `${name[0]} ${name[1]}`});
+                setSearchParams({page, sortBy: `${name[0]} ${name[1]}`});
 
             }
 
@@ -81,6 +88,9 @@ const UsersManager = () => {
 
     const sortByName = async (word) => {
 
+        if (searchByName === true){
+            setPage(1);
+        }
         if (!searchByName){
 
             setOrder(null);
@@ -91,11 +101,11 @@ const UsersManager = () => {
 
             setSearch(`${word}:asc`);
 
-            setSearchParams({page: page, sortBy: `${word} asc` });
+            setSearchParams({page, sortBy: `${word} asc` });
 
         }else {
 
-            setSearchParams({page: page, sortBy: `${word} desc`});
+            setSearchParams({page, sortBy: `${word} desc`});
 
             setSearch(`${word}:desc`);
 
@@ -106,18 +116,21 @@ const UsersManager = () => {
 
         }
 
-    }
-    console.log(order);
-    console.log(orders);
+    };
+
     const reset = async () => {
+        setPage(1)
         setOrder(null);
-        setSearchParams({page});
+        setSearchParams({page:1});
         setSearch('');
         setName(null)
+        setOrderPage(null);
+
         await dispatch(ordersAction.getAll({page }));
+        setSearchByName(true);
 
+        setResetForm(true);
     }
-
     return (
         <div className={css.box}>
             <div className={css.usersBox}>
@@ -125,8 +138,17 @@ const UsersManager = () => {
 
                     <div className={css.boxBiReset} onClick={()=>reset()}><BiReset className={css.BiReset}/></div>
 
-                    <div className={css.headBoxSearch}>
+                    <div className={order === null? css.headBoxSearch : css.headBoxSearchOrder}>
                         <BlogFilter
+                            start_dateQuery={start_dateQuery}
+                            end_dateQuery={end_dateQuery}
+                            setResetForm={setResetForm}
+                            resetForm={resetForm}
+                            setPage={setPage}
+                            orderPage={orderPage}
+                            loader={loader}
+                            order={order}
+                            setOrderPage={setOrderPage}
                             pageQty={pageQty}
                             page={page}
                             setOrder={setOrder}
@@ -163,23 +185,12 @@ const UsersManager = () => {
                             <div onClick={()=>sortByName('group')} className={css.all && css.course_format}>group</div>
                             <div onClick={()=>sortByName('created_at')} className={css.all && css.course_format}>created_at</div>
                             <div onClick={()=>sortByName('manager')} className={css.all}>manager</div>
-
                         </div>
                         { loader
                             ?<div className={css.boxLoader}><Loader/></div>
-                            :order === null ? orders.data && orders.data.map(order => <User page={page} search={search} nameQur={name} key={order.id} order={order}/>)
-                                //     .filter(order =>
-                                //     order.name.includes(nameQuery)
-                                //     && order.surname.includes(surnameQuery)
-                                //     && order.email.includes(emailQuery)
-                                //     && order.phone.includes(phoneQuery)
-                                //     && order.course.includes(courseQuery)
-                                //     && order.course_format.includes(course_formatQuery)
-                                //     && order.course_type.includes(course_typeQuery)
-                                //         // eslint-disable-next-line no-mixed-operators
-                                //     && !ageQuery.length || order.age === +ageQuery && order.name.includes(nameQuery) && order.surname.includes(surnameQuery) && order.email.includes(emailQuery) && order.phone.includes(phoneQuery) && order.course.includes(courseQuery) && order.course_format.includes(course_formatQuery)
-                                //
-                                // )
+                            :order === null
+                                ? orders.data && orders.data.map(order => <User page={page} search={search} nameQur={name} key={order.id} order={order}/>)
+
                                 :order !== null && order.length >=0 && order.map(orde => <User page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
                     </div>
                     {order === null
@@ -212,8 +223,7 @@ const UsersManager = () => {
                                 </Container>
                             </div>
 
-                        :
-                        <div></div>}
+                        :<div></div>}
 
 
 
