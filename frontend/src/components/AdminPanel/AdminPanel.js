@@ -15,8 +15,8 @@ const AdminPanel = ({manager}) => {
     const dispatch = useDispatch();
 
     const addPassword = () => {
-
-        if (manager.active === false) {
+        console.log(manager)
+        if (manager.is_active === false) {
             dispatch(authAction.addPassword({email: manager.email}))
             alert('We have send you a confirmation email');
         } else {

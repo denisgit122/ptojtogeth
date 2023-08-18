@@ -1,11 +1,10 @@
 import css from "../../AdminPanel/AdminPanel.module.css";
 
 const ManagerDescription = ({manager}) => {
-    const {email, name, surname, is_active, last_login, status} = manager;
+    const {email, name, surname, last_login, status} = manager;
     let strings = '';
     let login = '';
     let loginDay = '';
-    let _id = '';
 
     if (manager.last_login){
         strings = last_login.split('-').slice(0,2);

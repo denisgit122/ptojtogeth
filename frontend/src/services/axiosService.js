@@ -36,7 +36,7 @@ axiosService.interceptors.response.use(config=>{
                     return axiosService(originalRequest)
                 } catch (e) {
                     authService.deletesToken();
-                    authService.deletesToken();
+                    authService.deletesManagerLoc();
                     isRefreshing = false
                     history.replace('/login?expSession=true')
                     // return Promise.reject(error)

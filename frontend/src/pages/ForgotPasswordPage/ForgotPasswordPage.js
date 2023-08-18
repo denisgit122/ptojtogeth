@@ -2,7 +2,7 @@ import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 import css from './AddPasswordPage.module.css'
 import {passwordValidator} from "../../validators";

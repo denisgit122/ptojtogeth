@@ -9,7 +9,7 @@ const ButtonAdmin = ({active, setActive, word}) => {
     }
     return (
         <div>
-            <button className={css.button} onClick={event => log()}>
+            <button className={css.button} onClick={() => log()}>
                 <span></span>
                 <span></span>
                 <span></span>

@@ -1,12 +1,13 @@
 import {useState} from "react";
-
-import css from './BlogFilter.module.css'
-import {ordersService} from "../../services";
 import {useSelector} from "react-redux";
 import {Container, Pagination, PaginationItem, Stack} from "@mui/material";
 import {Link} from "react-router-dom";
 
-const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, setResetForm, resetForm, start_dateQuery,
+import css from './BlogFilter.module.css'
+import {ordersService} from "../../services";
+
+
+const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, setResetForm, resetForm, start_dateQuery,
                         page, setSearchParams,nameQuery,surnameQuery, emailQuery, phoneQuery, ageQuery, end_dateQuery,
                         courseQuery, course_formatQuery, course_typeQuery, statusQuery, groupsQuery}) => {
 
@@ -30,8 +31,6 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
     const [endDate, setEndDate] = useState(false);
 
     const {groups} = useSelector(state => state.groups)
-
-    const [sendMessage, setSendMessage]= useState(true)
 
     if (resetForm === true){
         setTimeout(() =>{
@@ -110,7 +109,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
             })
 
         }
-
+        setPage(1);
         setSearchParams(params);
 
         } else if (pageQtys) {
@@ -126,7 +125,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
                     setOrder(prev=> prev === null ? [user] : [...prev, user]))
             });
 
-            for (let i = 1; i < pageQtys + 1; i++) {
+            for (let i = 1; i < 20 + 1; i++) {
 
                 ordersService.getBySearch(
                     page = i, params.name, params.surname, params.email, params.phone, params.age, params.course,
@@ -143,19 +142,6 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
 
     }
 
-    if (orderPage?.length>25){
-        if (sendMessage === true ){
-
-            setSendMessage(false)
-            alert('if you want to use page numbering uou need to:' +
-                '1) Be sure to select a page.' +
-                '2) Click the search button')
-            setTimeout(()=> {
-                setSendMessage(true)
-            }, 9000)
-        }
-
-    }
 
     return (
         <div className={css.headForm}>
@@ -229,7 +215,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
 
 
             </form>
-            {order === null
+            {order === null || Math.ceil(+orderPage.length/25)<=0
             ? <div></div>
 
             :
@@ -237,7 +223,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage,setPage, se
                 <Container>
                     <Stack spacing={2}>
                         {
-                            !!pageQty && (<Pagination
+                            (<Pagination
                                 sx={{marginY:3, marginX: "auto"}}
                                 count={Math.ceil(+orderPage.length/25)}
                                 page={page}

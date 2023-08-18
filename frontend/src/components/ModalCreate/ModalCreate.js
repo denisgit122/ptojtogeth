@@ -1,10 +1,10 @@
-import './ModalCreate.css'
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {managerValidator} from "../../validators";
 import {useDispatch} from "react-redux";
-import {managerAction} from "../../redux/slices/manager.slice";
 
+import {managerAction} from "../../redux/slices/manager.slice";
+import {managerValidator} from "../../validators";
+import './ModalCreate.css'
 const ModalCreate = ({active,setModalActive}) => {
 
     const {reset, register, handleSubmit, formState:{errors, isValid}} = useForm(

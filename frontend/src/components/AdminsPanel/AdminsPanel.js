@@ -1,12 +1,13 @@
-import css from './AdminPanel.module.css'
-import {AdminPanel} from "../AdminPanel/AdminPanel";
 import {useEffect, useState} from "react";
-import {ModalCreate} from "../ModalCreate/ModalCreate";
 import {useDispatch, useSelector} from "react-redux";
-import {managerAction} from "../../redux/slices/manager.slice";
-import {Loader} from "../Loader/Loader";
 import {Container, Pagination, PaginationItem, Stack} from "@mui/material";
 import {Link, useLocation} from "react-router-dom";
+
+import {managerAction} from "../../redux/slices/manager.slice";
+import {Loader} from "../Loader/Loader";
+import css from './AdminPanel.module.css'
+import {AdminPanel} from "../AdminPanel/AdminPanel";
+import {ModalCreate} from "../ModalCreate/ModalCreate";
 
 const AdminsPanel = () => {
 

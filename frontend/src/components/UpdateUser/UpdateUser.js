@@ -1,8 +1,9 @@
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {ordersAction} from "../../redux/slices/orders.slice";
 import {joiResolver} from "@hookform/resolvers/joi/dist/joi";
+
+import {ordersAction} from "../../redux/slices/orders.slice";
 import {updateValidator} from "../../validators";
 import {groupAction} from "../../redux/slices/group.slice";
 

@@ -2,7 +2,7 @@ import css from '../Comments/Comment.module.css'
 
 const Comment = ({comment}) => {
 
-    const {text, author, id, orderId, created_at} = comment;
+    const {text, author, created_at} = comment;
 
     let strings = '';
     let creatCar = '';

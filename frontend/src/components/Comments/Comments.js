@@ -4,7 +4,7 @@ import {useDispatch} from "react-redux";
 
 import css from './Comment.module.css'
 import {Comment} from "../Comment/Comment";
-import {ordersService} from "../../services/ordersService";
+import {ordersService} from "../../services";
 import {ordersAction} from "../../redux/slices/orders.slice";
 import {UpdateUser} from "../UpdateUser/UpdateUser";
 
@@ -19,7 +19,7 @@ const Comments = ({page, id,search, order, nameQur}) => {
 
     const submit = async (data) => {
 
-        await dispatch(ordersAction.postComments({id: id, comment: data}));
+        await dispatch(ordersAction.postComments({id: id, comment: data, page}));
 
         ordersService.getAllComments(id).then(({data})=> setComments(data))
         reset();

@@ -1,5 +1,6 @@
-import css from './User.module.css'
 import {useState} from "react";
+
+import css from './User.module.css'
 import {Comments} from "../Comments/Comments";
 
 const User = ({page, nameQur,order, search}) => {

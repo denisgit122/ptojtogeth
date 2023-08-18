@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {ordersService} from "../../services/ordersService";
+
+import {ordersService} from "../../services";
 
 let initialState = {
     orders: [],
@@ -46,9 +47,10 @@ const getAllComments = createAsyncThunk (
 
 const postComments = createAsyncThunk (
     "carSlice/postComments",
-    async ({id, comment}, thunkAPI)=>{
+    async ({id, comment, page}, thunkAPI)=>{
         try {
             const {data} = await ordersService.postComments(id, comment);
+            thunkAPI.dispatch(getAll({page}))
             return data
         }catch (e) {
             return thunkAPI.rejectWithValue(e.response.data);

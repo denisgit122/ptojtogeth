@@ -1,5 +1,5 @@
 import Headroom from 'react-headroom'
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {CiLogout} from 'react-icons/ci'
 import {ImCogs} from 'react-icons/im'
 
@@ -8,6 +8,7 @@ import img from '../img/img.png'
 
 const Header = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const logOut = () => {
         localStorage.removeItem('access');
@@ -15,15 +16,23 @@ const Header = () => {
         navigate('/')
 
     }
+
+    const navigat = () =>{
+        if (location.pathname === "/adminPanel"){
+            navigate('/orders')
+
+        }
+    }
+
     return (
         <div className={css.headBox}>
 
             <Headroom className={css.headroom}>
                 <header className={css.header}>
 
-                    <NavLink to={"/orders"}>
-                        <img className={css.logo} src={img} alt="Logo"/>
-                    </NavLink>
+                    {/*<NavLink to={"/orders"}>*/}
+                        <img onClick={()=>navigat()} className={css.logo} src={img} alt="Logo"/>
+                    {/*</NavLink>*/}
                     <div>
                         <NavLink to={'/adminPanel'}>
                             <ImCogs className={css.cogs}/>

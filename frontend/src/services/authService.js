@@ -1,9 +1,8 @@
 import {baseURL, urlsAuth} from "../configs";
-import {axiosService, history} from "./axiosService";
+import {axiosService} from "./axiosService";
 
 const accessToken = "access";
 const refreshToken = "refresh";
-let error;
 
 const authService = {
 
