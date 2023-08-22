@@ -74,7 +74,8 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <input
                                className={ "inputUpd"}
                                type="text" placeholder={"Email"} {...register("email",{
-                                   required: false
+                                   required: true,
+
                         })}
                         />
                     </div>
@@ -86,7 +87,7 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                                type="text" placeholder={"Name"} {...register("name", {
                                  min:2,
                                  max:25,
-                                required: false
+                                required: true
                         })}
                         />
                     </div>
@@ -110,7 +111,7 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                                type="text" placeholder={"Surname"} {...register("surname",{
                                    min:2,
                                    max:25,
-                                   required:false
+                                   required:true
                         })}
                         />
                     </div>
@@ -134,7 +135,7 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                                    pattern:{
                                        value:/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
                                    },
-                                    required:false
+                                    required:true
                         })}
                         />
                     </div>
