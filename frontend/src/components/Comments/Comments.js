@@ -40,7 +40,7 @@ const Comments = ({page, id,search, order, nameQur}) => {
             <div className={css.form}>
                 <form onSubmit={handleSubmit(submit)}>
                     <input className={css.input} type="text" placeholder={'comment'} required={true} {...register('comment')}/>
-                    <button className={css.a}>Submit</button>
+                    <button disabled={order.manager !== null } className={css.a}>Submit</button>
                 </form>
             </div>
             <button disabled={order.manager !== null } onClick={() => setModalActive(true)} className={css.edit}>EDIT</button>

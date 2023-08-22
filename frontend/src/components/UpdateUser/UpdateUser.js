@@ -1,16 +1,14 @@
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {joiResolver} from "@hookform/resolvers/joi/dist/joi";
 
 import {ordersAction} from "../../redux/slices/orders.slice";
-import {updateValidator} from "../../validators";
 import {groupAction} from "../../redux/slices/group.slice";
 
 const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) => {
 
     const {reset, register, handleSubmit,setValue, formState:{isValid}} = useForm(
-        {mode:"all", resolver: joiResolver(updateValidator)}
+        {mode:"all"}
 
     );
     const {groups} = useSelector(state => state.groups);
@@ -73,9 +71,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
 
                     <div className='boxInp'>
                         <span>Email</span>
-                        <input required={false}
+                        <input
                                className={ "inputUpd"}
-                               type="text" placeholder={"Email"} {...register("email")}
+                               type="text" placeholder={"Email"} {...register("email",{
+                                   required: false
+                        })}
                         />
                     </div>
 
@@ -83,7 +83,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Name</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="text" placeholder={"Name"} {...register("name")}
+                               type="text" placeholder={"Name"} {...register("name", {
+                                 min:2,
+                                 max:25,
+                                required: false
+                        })}
                         />
                     </div>
 
@@ -91,7 +95,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Already paid</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="text" placeholder={"Already paid"} {...register("already_paid")}
+                               type="text" placeholder={"Already paid"} {...register("already_paid",{
+                                   valueAsNumber: true,
+                                   max:100000,
+                                   required:false
+                               })}
                         />
                     </div>
 
@@ -99,7 +107,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Surname</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="text" placeholder={"Surname"} {...register("surname")}
+                               type="text" placeholder={"Surname"} {...register("surname",{
+                                   min:2,
+                                   max:25,
+                                   required:false
+                        })}
                         />
                     </div>
 
@@ -107,14 +119,23 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Sum</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="number" placeholder={"Sum"} {...register("sum")}
+                               type="number" placeholder={"Sum"} {...register("sum", {
+                                   valueAsNumber: true,
+                                   max: 100000,
+                                   required:false
+                        })}
                         />
                     </div>
                     <div className='boxInp'>
                         <span>Phone</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="text" placeholder={"Phone"} {...register("phone")}
+                               type="text" placeholder={"Phone"} {...register("phone", {
+                                   pattern:{
+                                       value:/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+                                   },
+                                    required:false
+                        })}
                         />
                     </div>
 
@@ -122,14 +143,22 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Age</span>
                         <input required={false}
                                className={ "inputUpd"}
-                               type="text" placeholder={"Age"} {...register("age")}
+                               type="text" placeholder={"Age"} {...register("age", {
+                                   valueAsNumber: true,
+                                   min: 15,
+                                   max:100,
+                                   required: false,
+
+                        })}
                         />
                     </div>
 
                     <div className='boxInp'>
                         <span>Course</span>
 
-                        <select required={false} {...register("course")} className={'select'} name="course" >
+                        <select {...register("course", {
+                            required: false
+                        })} className={'select'} name="course" >
                             <option value="">all courses</option>
                             <option value="FS">FS</option>
                             <option value="QACX">QACX</option>
@@ -144,7 +173,10 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                     <div className='boxInp'>
                         <span>Course format</span>
 
-                        <select required={false} {...register("course_format")}
+                        <select {...register("course_format", {
+                            valueAsNumber: false,
+                            required: false
+                        })}
                                 className={'select'} name="course_format" >
                             <option value="">all formats</option>
                             <option value="static">static</option>
@@ -155,7 +187,10 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                     <div className='boxInp'>
                         <span>Course type</span>
 
-                        <select required={false} {...register("course_type")}
+                        <select {...register("course_type", {
+                            required: false,
+                            valueAsNumber: false
+                        })}
                                 className={'select'} name="course_type" >
                             <option value="">all course type</option>
                             <option value="pro">pro</option>
@@ -169,7 +204,9 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                     <div className='boxInp'>
                         <span>Status</span>
 
-                        <select required={false} {...register("status")}
+                        <select {...register("status", {
+                            required: false
+                        })}
                                 className={'select'} name="status" >
                             <option value="">all status</option>
                             <option value="In work">In work</option>
@@ -185,7 +222,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Groups</span>
                         {activeGroup ?
                             <div>
-                                <select required={false} {...register("group")}
+                                <select required={false} {...register("group", {
+                                    required: false,
+                                    max:25,
+                                    min: 25
+                                })}
                                         className={'select'} name="group" >
                                     <option  value="">all groups</option>
                                     {

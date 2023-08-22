@@ -14,8 +14,8 @@ const updateValidator = Joi.object({
     sum: Joi.number().max(100000).messages({}),
     already_paid: Joi.number().max(100000).messages({}),
     group: Joi.string().min(5).max(25).messages({}),
-    manager: Joi.string().min(5).max(25).messages({}),
-    comment: Joi.string().min(2).max(100).messages({}),
+    // manager: Joi.string().min(5).max(25).messages({}),
+    // comment: Joi.string().min(2).max(100).messages({}),
 
 })
 export {
