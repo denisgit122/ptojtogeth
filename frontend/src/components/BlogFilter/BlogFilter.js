@@ -1,7 +1,7 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {Container, Pagination, PaginationItem, Stack} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 import css from './BlogFilter.module.css'
 import {ordersService} from "../../services";
@@ -12,6 +12,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
                         courseQuery, course_formatQuery, course_typeQuery, statusQuery, groupsQuery}) => {
 
     const manager = localStorage.getItem('manager');
+    const location = useLocation();
 
     const [searchByName, setSearchByName] = useState(nameQuery);
     const [searchBySurname, setSearchBySurname] = useState(surnameQuery);
@@ -32,6 +33,9 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
 
     const {groups} = useSelector(state => state.groups)
 
+    const [data, setData] = useState();
+
+
     if (resetForm === true){
         setTimeout(() =>{
             setResetForm(false);
@@ -45,8 +49,8 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
             setSearchByCourse_type('');
             setSearchByStatus('');
             setSearchByGroups('');
-            setSearchByStart_date('');
-            setSearchByEnd_date('')
+            setSearchByStart_date(" ");
+            setSearchByEnd_date(" ")
         }, 10 )
 
      }
@@ -85,8 +89,6 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
         if (queryEnd?.length) params.endDate = queryEnd;
 
 
-        const pageQtys= 20;
-
         if (pageQty) {
         setOrderPage([]);
         setOrder([]);
@@ -95,53 +97,51 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
                 page, params.name, params.surname, params.email, params.phone, params.age, params.course,
                 params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
             ).then(({data}) => {
+                setData(data)
+                setOrderPage(data.totalPages)
                 data.data.map(user=>
                     setOrder(prev=> prev === null ? [user] : [...prev, user]))
             })
-        for (let i = 1; i < pageQty + 1; i++) {
-
-            ordersService.getBySearch(
-                page = i, params.name, params.surname, params.email, params.phone, params.age, params.course,
-                params.course_format, params.course_type, params.status, params.groups,params.startDate, params.endDate
-            ).then(({data}) => {
-                data.data.map(user=>
-                    setOrderPage(prev=> prev === null ? [user] : [...prev, user]))
-            })
-
-        }
         setPage(1);
-        setSearchParams(params);
+            setSearchParams(params);
 
-        } else if (pageQtys) {
-
-            setOrderPage([]);
-            setOrder([]);
-
-            ordersService.getBySearch(
-                page, params.name, params.surname, params.email, params.phone, params.age, params.course,
-                params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
-            ).then(({data}) => {
-                data.data.map(user=>
-                    setOrder(prev=> prev === null ? [user] : [...prev, user]))
-            });
-
-            for (let i = 1; i < 20 + 1; i++) {
-
-                ordersService.getBySearch(
-                    page = i, params.name, params.surname, params.email, params.phone, params.age, params.course,
-                    params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
-                ).then(({data}) => {
-                    data.data.map(user=>
-                        setOrderPage(prev=> prev === null ? [user] : [...prev, user]))
-                })
-
-
-            }
-            setSearchParams(params)
         }
-
     }
 
+    useEffect(() => {
+    if (location.search && !pageQty) {
+
+        const page = location.search?.split('=')[1]?.split('&')[0];
+
+        if (nameQuery.length) params.name = nameQuery;
+        if (surnameQuery.length) params.surname = surnameQuery;
+        if (emailQuery.length) params.email = emailQuery;
+        if (phoneQuery.length) params.phone = phoneQuery;
+        if (ageQuery.length) params.age = ageQuery;
+        if (courseQuery.length) params.course = courseQuery;
+        if (course_formatQuery.length) params.course_format = course_formatQuery;
+        if (course_typeQuery.length) params.course_type = course_typeQuery;
+        if (statusQuery.length) params.status = statusQuery;
+        if (groupsQuery.length) params.groups = groupsQuery;
+
+        if (start_dateQuery?.length) params.startDate = start_dateQuery;
+        if (end_dateQuery?.length) params.endDate = end_dateQuery;
+
+
+        setOrderPage([]);
+        setOrder([]);
+
+        ordersService.getBySearch(
+            page, params.name, params.surname, params.email, params.phone, params.age, params.course,
+            params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
+
+        ).then(({data}) => {
+            data.data.map(user=>
+                setOrder(prev=> prev === null ? [user] : [...prev, user]))
+        });
+        setPage(1);
+    }
+},[location])
 
     return (
         <div className={css.headForm}>
@@ -225,8 +225,8 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
                         {
                             (<Pagination
                                 sx={{marginY:3, marginX: "auto"}}
-                                count={Math.ceil(+orderPage.length/25)}
-                                page={page}
+                                count={orderPage}
+                                page={data.page}
                                 showFirstButton
                                 showLastButton
                                 onChange={(_, num) => setPage(num)}

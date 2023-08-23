@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {groupService} from "../../services/groupService";
+import {groupService} from "../../services";
 
 
 let initialState = {

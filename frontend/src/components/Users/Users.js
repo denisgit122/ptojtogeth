@@ -89,7 +89,7 @@ const Users = () => {
 
     const sortByName = async (word) => {
 
-        if (searchByName === true){
+        if (searchByName|| !searchByName){
             setPage(1);
         }
         if (!searchByName){

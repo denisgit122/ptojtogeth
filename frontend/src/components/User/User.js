@@ -36,7 +36,6 @@ const User = ({page, nameQur,order, search}) => {
 
         _id = arrId.splice(arrId.length-4, 4);
     }
-
     return (
         <div>
             <div onClick={() => comment()} className={css.headBox}>
@@ -54,7 +53,7 @@ const User = ({page, nameQur,order, search}) => {
                 <div className={css.already_paid}>{already_paid ? already_paid : 'null'}</div>
                 <div className={css.group}>{group ? group : 'null'}</div>
                 <div className={css.created_at}>{ created_at ?
-                    `${strings[0]}-${strings[1]}-${creatCarDay[1]}${creatCarDay[0]}`
+                    `${strings[0]}-${strings[1]}-${creatCarDay[0]}${creatCarDay[1]}`
                     : 'null'}</div>
 
                 <div className={css.manager}>{manager?.name ? manager.name : 'null'}</div>

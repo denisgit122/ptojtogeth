@@ -6,6 +6,8 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {loginValidator} from "../../validators";
 import {useState} from "react";
 import {authService} from "../../services";
+import {useDispatch, useSelector} from "react-redux";
+import {authAction} from "../../redux/slices/auth.slice";
 
 const LoginPage = () => {
     const {handleSubmit, register, reset, formState:{errors, isValid} } = useForm(
@@ -16,6 +18,9 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
     const access = authService.getAccessToken();
+
+    const dispatch = useDispatch();
+    const {err} = useSelector(state => state.auth)
 
         if (location.pathname !== "/login" ){
             navigate("/login")
@@ -38,8 +43,10 @@ const LoginPage = () => {
     const login = async (cred) => {
 
         try {
+            setTimeout(()=>setError("Email or password is incorrect"),700)
 
-            await authService.login(cred);
+            await dispatch(authAction.login(cred));
+
             if (cred.email === "admin@gmail.com"){
                 navigate("/orders")
                 localStorage.setItem('manager', "admin")
@@ -49,20 +56,20 @@ const LoginPage = () => {
 
             }
 
-
         }catch (e) {
             if (e.response.status === 401){
                 setError(e.response.data.message);
-            }
 
+            }
         }
+
         reset()
 
     }
-
     return (
         <div className={css.box}>
             <div className={css.loginBox}>
+
                 {error
                     ? <h2>{error}</h2>
                     :<h2>Login Form</h2>

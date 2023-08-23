@@ -8,7 +8,6 @@ const authService = {
 
     login: async function (data){
         const response = await axiosService.post(urlsAuth.auth.login, data);
-
         if (response.status === 200){
             this.setTokens(response.data)
         }

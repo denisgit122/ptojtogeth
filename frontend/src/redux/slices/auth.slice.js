@@ -3,7 +3,7 @@ import {authService} from "../../services";
 
 
 let initialState = {
-    errors: null,
+    err: null,
     loading: null
 };
 const forgotPassword = createAsyncThunk(
@@ -44,6 +44,19 @@ const addPasswordPut = createAsyncThunk(
         }
     }
 )
+const login = createAsyncThunk(
+    "authSlice/login",
+    async ({...cred},thunkAPI ) => {
+
+        try {
+            const {data} = await authService.login(cred);
+
+            return data;
+        }catch (e) {
+            return thunkAPI.rejectWithValue(e.response.data);
+        }
+    }
+)
 const addPassword = createAsyncThunk(
     "managerSlice/addPassword",
     async (email,thunkAPI ) => {
@@ -59,7 +72,12 @@ const addPassword = createAsyncThunk(
 const authSlice = createSlice({
     name: "authSlice",
     initialState,
-    reducers: {}
+    reducers: {},
+    extraReducers: {
+        [login.rejected]: (state, action)=>{
+            state.err = action.payload
+        },
+    }
 })
 
 const {reducer: authReducer} = authSlice;
@@ -69,6 +87,7 @@ const authAction = {
     forgotPasswordPut,
     addPassword,
     addPasswordPut,
+    login
 }
 export {
     authReducer,

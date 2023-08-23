@@ -58,30 +58,6 @@ axiosService.interceptors.response.use(config=>{
         }
         return Promise.reject(error)
     }
-
-    // async (error)=>{
-    //
-    //     const refresh = authService.getRefreshToken();
-    //
-    //     if (error.response?.status === 401 && refresh&& !isRefreshing){
-    //         isRefreshing = true
-    //         try {
-    //             isRefreshing = false;
-    //             await authService.refresh();
-    //         }catch (e) {
-    //
-    //             isRefreshing = false;
-    //             history.replace('/');
-    //             authService.deletesToken();
-    //
-    //         }
-    //         // isRefreshing = false;
-    //         return axiosService(error.config)
-    //     }
-    //
-    //     return Promise.reject(error);
-    //
-    // }
 )
 const subscribeToWaitList = (cb) => {
     waitList.push(cb)
