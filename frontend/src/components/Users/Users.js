@@ -33,7 +33,7 @@ const Users = () => {
     const [loader, setLoader] = useState(true );
 
 
-    const [search, setSearch] = useState('' );
+    const [search, setSearch] = useState('');
 
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -64,6 +64,7 @@ const Users = () => {
 
 
         if (search !== ''){
+
             dispatch(ordersAction.getAll({page, query: search}));
             const arg = search.split(':');
 
@@ -118,7 +119,6 @@ const Users = () => {
         }
 
     };
-
     const reset = async () => {
         setPage(1)
         setOrder(null);
@@ -141,6 +141,7 @@ const Users = () => {
 
                     <div className={order === null? css.headBoxSearch : css.headBoxSearchOrder}>
                         <BlogFilter
+                            name={name}
                             start_dateQuery={start_dateQuery}
                             end_dateQuery={end_dateQuery}
                             setResetForm={setResetForm}

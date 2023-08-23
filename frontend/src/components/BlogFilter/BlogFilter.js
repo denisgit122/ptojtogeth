@@ -7,7 +7,7 @@ import css from './BlogFilter.module.css'
 import {ordersService} from "../../services";
 
 
-const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, setResetForm, resetForm, start_dateQuery,
+const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPage, setResetForm, resetForm, start_dateQuery,
                         page, setSearchParams,nameQuery,surnameQuery, emailQuery, phoneQuery, ageQuery, end_dateQuery,
                         courseQuery, course_formatQuery, course_typeQuery, statusQuery, groupsQuery}) => {
 
@@ -109,37 +109,40 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
     }
 
     useEffect(() => {
-    if (location.search && !pageQty) {
+    if (location.search && !pageQty ) {
+        if (name?.[1]!=='asc' && name?.[1]!=='desc'){
 
-        const page = location.search?.split('=')[1]?.split('&')[0];
+            const page = location.search?.split('=')[1]?.split('&')[0] || 1;
 
-        if (nameQuery.length) params.name = nameQuery;
-        if (surnameQuery.length) params.surname = surnameQuery;
-        if (emailQuery.length) params.email = emailQuery;
-        if (phoneQuery.length) params.phone = phoneQuery;
-        if (ageQuery.length) params.age = ageQuery;
-        if (courseQuery.length) params.course = courseQuery;
-        if (course_formatQuery.length) params.course_format = course_formatQuery;
-        if (course_typeQuery.length) params.course_type = course_typeQuery;
-        if (statusQuery.length) params.status = statusQuery;
-        if (groupsQuery.length) params.groups = groupsQuery;
+            if (nameQuery.length) params.name = nameQuery;
+            if (surnameQuery.length) params.surname = surnameQuery;
+            if (emailQuery.length) params.email = emailQuery;
+            if (phoneQuery.length) params.phone = phoneQuery;
+            if (ageQuery.length) params.age = ageQuery;
+            if (courseQuery.length) params.course = courseQuery;
+            if (course_formatQuery.length) params.course_format = course_formatQuery;
+            if (course_typeQuery.length) params.course_type = course_typeQuery;
+            if (statusQuery.length) params.status = statusQuery;
+            if (groupsQuery.length) params.groups = groupsQuery;
 
-        if (start_dateQuery?.length) params.startDate = start_dateQuery;
-        if (end_dateQuery?.length) params.endDate = end_dateQuery;
+            if (start_dateQuery?.length) params.startDate = start_dateQuery;
+            if (end_dateQuery?.length) params.endDate = end_dateQuery;
 
 
-        setOrderPage([]);
-        setOrder([]);
+            setOrderPage([]);
+            setOrder([]);
 
-        ordersService.getBySearch(
-            page, params.name, params.surname, params.email, params.phone, params.age, params.course,
-            params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
+            ordersService.getBySearch(
+                page, params.name, params.surname, params.email, params.phone, params.age, params.course,
+                params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
 
-        ).then(({data}) => {
-            data.data.map(user=>
-                setOrder(prev=> prev === null ? [user] : [...prev, user]))
-        });
-        setPage(1);
+            ).then(({data}) => {
+                data.data.map(user=>
+                    setOrder(prev=> prev === null ? [user] : [...prev, user]))
+            });
+            setPage(1);
+        }
+
     }
 },[location])
 
