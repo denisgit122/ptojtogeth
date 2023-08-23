@@ -35,7 +35,6 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
     const [data, setData] = useState();
 
-
     if (resetForm === true){
         setTimeout(() =>{
             setResetForm(false);
@@ -49,8 +48,8 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
             setSearchByCourse_type('');
             setSearchByStatus('');
             setSearchByGroups('');
-            setSearchByStart_date(" ");
-            setSearchByEnd_date(" ")
+            setSearchByStart_date(' ');
+            setSearchByEnd_date(' ')
         }, 10 )
 
      }
@@ -145,7 +144,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
     }
 },[location])
-
+    console.log(searchByStart_date);
     return (
         <div className={css.headForm}>
             <form autoComplete='off' onSubmit={handleSubmit} action="">
@@ -237,7 +236,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                                     (item) =>(
                                         <PaginationItem
                                             component={Link}
-                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}${searchByEnd_date !== '' ? `&endDate=${searchByEnd_date}` : ''}${searchByEmail !== '' ? `&email=${searchByEmail}` : ''}${searchBySurname !== '' ? `&surname=${searchBySurname}` : ''}${searchByName !== '' ? `&name=${searchByName}` : ''}${searchByCourse !== '' ? `&course=${searchByCourse}` : ''}${searchByAge !== '' ? `&age=${searchByAge}` : ''}${searchByPhone !== '' ? `&phone=${searchByPhone}` : ''}${searchByStatus !== '' ? `&status=${searchByStatus}` : ''}${searchByCourse_type !== '' ? `&course_type=${searchByCourse_type}` : ''}${searchByCourse_format !== '' ? `course_format=${searchByCourse_format}` : ''}${searchByStart_date !== '' ? `&startDate=${searchByStart_date}` : ''}${searchByGroups !== '' ? `&groups=${searchByGroups}` : ''}
+                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}${searchByEmail !== '' ? `&email=${searchByEmail}` : ''}${searchBySurname !== '' ? `&surname=${searchBySurname}` : ''}${searchByName !== '' ? `&name=${searchByName}` : ''}${searchByCourse !== '' ? `&course=${searchByCourse}` : ''}${searchByAge !== '' ? `&age=${searchByAge}` : ''}${searchByPhone !== '' ? `&phone=${searchByPhone}` : ''}${searchByStatus !== '' ? `&status=${searchByStatus}` : ''}${searchByCourse_type !== '' ? `&course_type=${searchByCourse_type}` : ''}${searchByCourse_format !== '' ? `course_format=${searchByCourse_format}` : ''}${searchByGroups !== '' ? `&groups=${searchByGroups}` : ''}
                                           `}
                                             {...item}
                                         />
