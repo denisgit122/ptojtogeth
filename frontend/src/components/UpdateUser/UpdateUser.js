@@ -4,14 +4,18 @@ import {useEffect, useState} from "react";
 
 import {ordersAction} from "../../redux/slices/orders.slice";
 import {groupAction} from "../../redux/slices/group.slice";
+import {useLocation} from "react-router-dom";
 
 const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) => {
 
-    const {reset, register, handleSubmit,setValue, formState:{isValid}} = useForm(
+    const {reset, register, setValue, formState:{isValid}} = useForm(
         {mode:"all"}
 
     );
     const {groups} = useSelector(state => state.groups);
+
+    const location = useLocation()
+    const {orders} = useSelector(state => state.orders);
 
     const [activeGroup, setActiveGroup] = useState(true);
     const [groupValue, setGroupValue] = useState('');
@@ -80,23 +84,22 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
         if (querySurname.length) user.surname = querySurname;
 
         if (name !== null){
-            console.log(11)
             if (name[1]==='asc' || name[1]==='desc'){
                 dispatch(ordersAction.updateOrder({id:order.id, value: user, page,query: `${name[0]}:${name[1]}`}))
             }
         }
         else if (search){
-            console.log(12)
-            dispatch(ordersAction.updateOrder({id: order.id, value: user, page, query: search}));
+            dispatch(ordersAction.updateOrder({id: order.id, value: user, page, query:search}));
 
         }
         else if (name === null && search === '') {
             console.log(13)
-            dispatch(ordersAction.updateOrder({id:order.id, value: user, page }));
+            dispatch(ordersAction.updateOrder({id:order.id, value: user, page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1) }));
+            dispatch(ordersAction.getAll({page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1)}))
 
-            console.log(page);
+            // console.log(parseInt(location.search?.split('=')[1]?.split('&')[0]));
             }
-        console.log(user);
+        // console.log(user);
     };
 
     const output = () => {
@@ -109,7 +112,6 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
         setActiveGroup(true);
 
     };
-
     return (
         <div className={active ? "modal active" : "modal"} onClick={() => output()}>
             <div className="modalContentUpd" onClick={e => e.stopPropagation()}>

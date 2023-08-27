@@ -52,7 +52,6 @@ const Users = () => {
     const start_dateQuery = searchParams.get('start_date') || '';
     const end_dateQuery = searchParams.get('end_date') || '';
 
-
     useEffect(() => {
         setLoader(true);
 

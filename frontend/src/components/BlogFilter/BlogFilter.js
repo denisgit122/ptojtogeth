@@ -92,7 +92,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
         if (pageQty) {
         setOrderPage([]);
         setOrder([]);
-
+            console.log('lox1')
             ordersService.getBySearch(
                 page, params.name, params.surname, params.email, params.phone, params.age, params.course,
                 params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
@@ -168,7 +168,7 @@ setPage(1)
 
             setOrderPage([]);
             setOrder([]);
-
+            console.log("lox")
             ordersService.getBySearch(
                 1, params.name, params.surname, params.email, params.phone, params.age, params.course,
                 params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
