@@ -37,6 +37,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
     if (resetForm === true){
         setTimeout(() =>{
+            setOrder(null)
             setResetForm(false);
             setSearchByName('');
             setSearchBySurname('');
@@ -97,11 +98,13 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                 params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
             ).then(({data}) => {
                 setData(data)
+
                 setOrderPage(data.totalPages)
                 data.data.map(user=>
                     setOrder(prev=> prev === null ? [user] : [...prev, user]))
             })
-        setPage(1);
+
+        // setPage(1);
             setSearchParams(params);
 
         }
@@ -143,8 +146,45 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
         }
 
     }
-},[location])
-    console.log(searchByStart_date);
+
+
+        if (data?.page > data?.totalPages){
+setOrder([]);
+setPage(1)
+            if (nameQuery.length) params.name = nameQuery;
+            if (surnameQuery.length) params.surname = surnameQuery;
+            if (emailQuery.length) params.email = emailQuery;
+            if (phoneQuery.length) params.phone = phoneQuery;
+            if (ageQuery.length) params.age = ageQuery;
+            if (courseQuery.length) params.course = courseQuery;
+            if (course_formatQuery.length) params.course_format = course_formatQuery;
+            if (course_typeQuery.length) params.course_type = course_typeQuery;
+            if (statusQuery.length) params.status = statusQuery;
+            if (groupsQuery.length) params.groups = groupsQuery;
+
+            if (start_dateQuery?.length) params.startDate = start_dateQuery;
+            if (end_dateQuery?.length) params.endDate = end_dateQuery;
+
+
+            setOrderPage([]);
+            setOrder([]);
+
+            ordersService.getBySearch(
+                1, params.name, params.surname, params.email, params.phone, params.age, params.course,
+                params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
+
+            ).then(({data}) => {
+                setData(data)
+
+                setOrderPage(data.totalPages)
+                data.data.map(user=>
+                    setOrder(prev=> prev === null ? [user] : [...prev, user]))
+            });
+            setPage(1);
+            params.page = 1;
+
+        }
+},[location, data])
     return (
         <div className={css.headForm}>
             <form autoComplete='off' onSubmit={handleSubmit} action="">
@@ -228,7 +268,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                             (<Pagination
                                 sx={{marginY:3, marginX: "auto"}}
                                 count={orderPage}
-                                page={data.page}
+                                page={page}
                                 showFirstButton
                                 showLastButton
                                 onChange={(_, num) => setPage(num)}

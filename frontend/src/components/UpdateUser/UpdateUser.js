@@ -16,6 +16,19 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
     const [activeGroup, setActiveGroup] = useState(true);
     const [groupValue, setGroupValue] = useState('');
 
+    const [searchName, setSearchName] = useState(null);
+    const [searchAge, setSearchAge] = useState(null);
+    const [searchAlready_paid, setSearchAlready_paid] = useState(null);
+    const [searchCourse, setSearchCourse] = useState(null);
+    const [searchCourse_format, setSearchCourse_format] = useState(null)
+    const [searchCourse_type, setSearchCourse_type] = useState(null);
+    const [searchEmail, setSearchEmail] = useState(null);
+    const [searchGroup, setSearchGroup] = useState(null);
+    const [searchPhone, setSearchPhone] = useState(null);
+    const [searchStatusm, setSearchStatus] = useState(null);
+    const [searchSum, setSearchSum] = useState(null);
+    const [searchSurname, setSearchSurname] = useState(null);
+
     useEffect(() => {
         if (order){
             setValue("email", order.email, {shouldValidate: true})
@@ -34,23 +47,56 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
     },[order, setValue])
 
     const dispatch = useDispatch();
+    const user = {};
+    const create = (e) =>{
+        e.preventDefault();
 
-    const create = (data) =>{
+        const form = e.target;
+
+        const queryName = form.name.value;
+        const querySurname = form.surname.value;
+        const queryEmail = form.email.value;
+        const queryPhone = form.phone.value;
+        const queryAge = form.age.value;
+        const queryCourse = form.course.value;
+        const queryCourse_format = form.course_format.value;
+        const queryCourse_type = form.course_type.value;
+        const queryStatus = form.status.value;
+        const queryGroups = form.groups.value;
+        const queryAlready_paid = form.already_paid.value;
+        const querySum = form.sum.value;
+
+        if (queryAge.length) user.age = +queryAge;
+        if (queryAlready_paid.length) user.already_paid = +queryAlready_paid;
+        if (queryCourse.length) user.course = queryCourse;
+        if (queryCourse_format.length) user.course_format = queryCourse_format;
+        if (queryCourse_type.length) user.course_type = queryCourse_type;
+        if (queryEmail.length) user.email = queryEmail;
+        if (queryGroups.length) user.group = queryGroups;
+        if (queryName.length) user.name = queryName;
+        if (queryPhone.length) user.phone = queryPhone;
+        if (queryStatus.length) user.status = queryStatus;
+        if (querySum.length) user.sum = +querySum;
+        if (querySurname.length) user.surname = querySurname;
 
         if (name !== null){
-
+            console.log(11)
             if (name[1]==='asc' || name[1]==='desc'){
-                dispatch(ordersAction.updateOrder({id:order.id, value: data, page,query: `${name[0]}:${name[1]}`}))
+                dispatch(ordersAction.updateOrder({id:order.id, value: user, page,query: `${name[0]}:${name[1]}`}))
             }
         }
         else if (search){
-            dispatch(ordersAction.updateOrder({id: order.id, value: data, page, query: search}));
+            console.log(12)
+            dispatch(ordersAction.updateOrder({id: order.id, value: user, page, query: search}));
 
         }
         else if (name === null && search === '') {
-            dispatch(ordersAction.updateOrder({id:order.id, value: data, page }));
-        }
+            console.log(13)
+            dispatch(ordersAction.updateOrder({id:order.id, value: user, page }));
 
+            console.log(page);
+            }
+        console.log(user);
     };
 
     const output = () => {
@@ -67,36 +113,40 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
     return (
         <div className={active ? "modal active" : "modal"} onClick={() => output()}>
             <div className="modalContentUpd" onClick={e => e.stopPropagation()}>
-                <form className={'formUpt'} onSubmit={handleSubmit(create)}>
+                <form className={'formUpt'} onSubmit={create}>
 
                     <div className='boxInp'>
                         <span>Email</span>
-                        <input
-                               className={ "inputUpd"}
-                               type="text" placeholder={"Email"} {...register("email",{
-                                   required: true,
-
-                        })}
+                        <input className={ "inputUpd"} type="text" name={"email"} onChange={e => setSearchEmail(e.target.value)} placeholder={"Email"}
+                               {...register("email",{
+                                   required: false,
+                               })}
                         />
                     </div>
 
                     <div className='boxInp'>
                         <span>Name</span>
-                        <input required={false}
-                               className={ "inputUpd"}
-                               type="text" placeholder={"Name"} {...register("name", {
+                        <input className={ "inputUpd"} type="text"
+                               name={"name"} onChange={e => setSearchName(e.target.value)} placeholder={"Name"}
+                               {...register("name", {
                                  min:2,
                                  max:25,
-                                required: true
+                                required: false
                         })}
                         />
                     </div>
 
                     <div className='boxInp'>
                         <span>Already paid</span>
+
                         <input required={false}
+
                                className={ "inputUpd"}
-                               type="text" placeholder={"Already paid"} {...register("already_paid",{
+                               type="text" placeholder={"Already paid"}
+                               name={"already_paid"}
+                                onChange={e => setSearchAlready_paid(e.target.value)}
+
+                               {...register("already_paid",{
                                    valueAsNumber: true,
                                    max:100000,
                                    required:false
@@ -108,10 +158,11 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Surname</span>
                         <input required={false}
                                className={ "inputUpd"}
+                               name={'surname'} onChange={e => setSearchSurname(e.target.value)}
                                type="text" placeholder={"Surname"} {...register("surname",{
                                    min:2,
                                    max:25,
-                                   required:true
+                                   required:false
                         })}
                         />
                     </div>
@@ -120,6 +171,7 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Sum</span>
                         <input required={false}
                                className={ "inputUpd"}
+                               name={'sum'} onChange={e => setSearchSum(e.target.value)}
                                type="number" placeholder={"Sum"} {...register("sum", {
                                    valueAsNumber: true,
                                    max: 100000,
@@ -131,11 +183,12 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Phone</span>
                         <input required={false}
                                className={ "inputUpd"}
+                               name={'phone'} onChange={e => setSearchPhone(e.target.value)}
                                type="text" placeholder={"Phone"} {...register("phone", {
                                    pattern:{
                                        value:/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
                                    },
-                                    required:true
+                                    required:false
                         })}
                         />
                     </div>
@@ -144,6 +197,7 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <span>Age</span>
                         <input required={false}
                                className={ "inputUpd"}
+                               name={'age'} onChange={e => setSearchAge(e.target.value)}
                                type="text" placeholder={"Age"} {...register("age", {
                                    valueAsNumber: true,
                                    min: 15,
@@ -159,7 +213,9 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
 
                         <select {...register("course", {
                             required: false
-                        })} className={'select'} name="course" >
+                        })}
+                                name="course" onChange={e => setSearchCourse(e.target.value)}
+                                className={'select'} >
                             <option value="">all courses</option>
                             <option value="FS">FS</option>
                             <option value="QACX">QACX</option>
@@ -178,7 +234,8 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                             valueAsNumber: false,
                             required: false
                         })}
-                                className={'select'} name="course_format" >
+                                name="course_format" onChange={e => setSearchCourse_format(e.target.value)}
+                                className={'select'} >
                             <option value="">all formats</option>
                             <option value="static">static</option>
                             <option value="online">online</option>
@@ -192,7 +249,8 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                             required: false,
                             valueAsNumber: false
                         })}
-                                className={'select'} name="course_type" >
+                                name="course_type" onChange={e => setSearchCourse_type(e.target.value)}
+                                className={'select'} >
                             <option value="">all course type</option>
                             <option value="pro">pro</option>
                             <option value="minimal">minimal</option>
@@ -208,7 +266,8 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                         <select {...register("status", {
                             required: false
                         })}
-                                className={'select'} name="status" >
+                                name="status" onChange={e => setSearchStatus(e.target.value)}
+                                className={'select'} >
                             <option value="">all status</option>
                             <option value="In work">In work</option>
                             <option value="New">new</option>
@@ -228,7 +287,8 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
                                     max:25,
                                     min: 25
                                 })}
-                                        className={'select'} name="group" >
+                                        name="groups"  onChange={e => setSearchGroup(e.target.value)}
+                                        className={'select'}  >
                                     <option  value="">all groups</option>
                                     {
                                         groups.map(group => <option  key={group.id}>{group.name}</option>)
