@@ -6,7 +6,7 @@ import {ordersAction} from "../../redux/slices/orders.slice";
 import {groupAction} from "../../redux/slices/group.slice";
 import {useLocation} from "react-router-dom";
 
-const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) => {
+const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, setOrder, orders:orde, ord}) => {
 
     const {reset, register, setValue, formState:{isValid}} = useForm(
         {mode:"all"}
@@ -96,12 +96,13 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search}) 
             console.log(13)
             dispatch(ordersAction.updateOrder({id:order.id, value: user, page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1) }));
             dispatch(ordersAction.getAll({page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1)}))
-
+if (orde === undefined && ord.length){
+    setOrder(orders.data)
+}
             // console.log(parseInt(location.search?.split('=')[1]?.split('&')[0]));
             }
         // console.log(user);
     };
-
     const output = () => {
         setModalActive(false);
         reset();

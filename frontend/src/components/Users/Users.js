@@ -190,9 +190,9 @@ const Users = () => {
                         { loader
                             ?<div className={css.boxLoader}><Loader/></div>
                             :order === null
-                              ? orders.data && orders.data.map(order => <User page={page} search={search} nameQur={name} key={order.id} order={order}/>)
+                              ? orders.data && orders.data.map(order => <User orders={orders}  page={page} search={search} nameQur={name} key={order.id} order={order}/>)
 
-                              :order !== null && order.length >=0 && order.map(orde => <User page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
+                              :order !== null && order.length >=0 && order.map(orde => <User ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
                     </div>
                     {order === null
                         ? loader

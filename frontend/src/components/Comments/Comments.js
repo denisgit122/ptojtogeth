@@ -8,7 +8,7 @@ import {ordersService} from "../../services";
 import {ordersAction} from "../../redux/slices/orders.slice";
 import {UpdateUser} from "../UpdateUser/UpdateUser";
 
-const Comments = ({page, id,search, order, nameQur}) => {
+const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
 
     const [comments, setComments] = useState('');
     const [modalActive, setModalActive] = useState(false);
@@ -44,7 +44,7 @@ const Comments = ({page, id,search, order, nameQur}) => {
                 </form>
             </div>
             <button disabled={order.manager !== null } onClick={() => setModalActive(true)} className={css.edit}>EDIT</button>
-            <UpdateUser page={page} search={search} nameQur={nameQur} order={order} active={modalActive} setModalActive={setModalActive}/>
+            <UpdateUser page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} order={order} active={modalActive} setModalActive={setModalActive}/>
 
         </div>
     );
