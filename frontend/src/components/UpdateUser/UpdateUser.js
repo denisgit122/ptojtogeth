@@ -93,11 +93,12 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, s
 
         }
         else if (name === null && search === '') {
-            console.log(13)
+
             dispatch(ordersAction.updateOrder({id:order.id, value: user, page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1) }));
             dispatch(ordersAction.getAll({page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1)}))
-if (orde === undefined && ord.length){
-    setOrder(orders.data)
+
+            if (orde === undefined && ord.length){
+                setOrder(orders.data)
 }
             // console.log(parseInt(location.search?.split('=')[1]?.split('&')[0]));
             }
