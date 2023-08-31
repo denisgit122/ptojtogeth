@@ -168,32 +168,6 @@ const Users = () => {
                         />
 
                     </div>
-                    <div >
-                        <div className={css.headBox}>
-
-                            <div onClick={()=>sortByName('id')} className={css.all && css.id}>id</div>
-                            <div onClick={()=>sortByName('name')} className={css.all && css.name}>name</div>
-                            <div onClick={()=>sortByName('surname')} className={css.all && css.surname}>surname</div>
-                            <div onClick={()=>sortByName('email')} className={css.all && css.email}>email</div>
-                            <div onClick={()=>sortByName('phone')} className={css.all && css.phone}>phone</div>
-                            <div onClick={()=>sortByName('age')} className={css.all && css.age}>age</div>
-                            <div onClick={()=>sortByName('course')} className={css.all && css.surname}>course</div>
-                            <div onClick={()=>sortByName('course_format')} className={css.all && css.course_format}>course_format</div>
-                            <div onClick={()=>sortByName('course_type')} className={css.all && css.course_format}>course_type</div>
-                            <div onClick={()=>sortByName('status')} className={css.all && css.course_format}>status</div>
-                            <div onClick={()=>sortByName('sum')} className={css.all && css.course_format}>sum</div>
-                            <div onClick={()=>sortByName('already_paid')} className={css.all && css.course_format}>already_paid</div>
-                            <div onClick={()=>sortByName('group')} className={css.all && css.course_format}>group</div>
-                            <div onClick={()=>sortByName('created_at')} className={css.all && css.course_format}>created_at</div>
-                            <div onClick={()=>sortByName('manager')} className={css.all}>manager</div>
-                        </div>
-                        { loader
-                            ?<div className={css.boxLoader}><Loader/></div>
-                            :order === null
-                              ? orders.data && orders.data.map(order => <User orders={orders}  page={page} search={search} nameQur={name} key={order.id} order={order}/>)
-
-                              :order !== null && order.length >=0 && order.map(orde => <User ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
-                    </div>
                     {order === null
                         ? loader
                             ?<div className={css.boxLoader}><Loader/></div>
@@ -225,8 +199,32 @@ const Users = () => {
                             </div>
 
                         :<div></div>}
+                    <div >
+                        <div className={css.headBox}>
 
+                            <div onClick={()=>sortByName('id')} className={css.all && css.id}>id</div>
+                            <div onClick={()=>sortByName('name')} className={css.all && css.name}>name</div>
+                            <div onClick={()=>sortByName('surname')} className={css.all && css.surname}>surname</div>
+                            <div onClick={()=>sortByName('email')} className={css.all && css.email}>email</div>
+                            <div onClick={()=>sortByName('phone')} className={css.all && css.phone}>phone</div>
+                            <div onClick={()=>sortByName('age')} className={css.all && css.age}>age</div>
+                            <div onClick={()=>sortByName('course')} className={css.all && css.surname}>course</div>
+                            <div onClick={()=>sortByName('course_format')} className={css.all && css.course_format}>course_format</div>
+                            <div onClick={()=>sortByName('course_type')} className={css.all && css.course_format}>course_type</div>
+                            <div onClick={()=>sortByName('status')} className={css.all && css.course_format}>status</div>
+                            <div onClick={()=>sortByName('sum')} className={css.all && css.course_format}>sum</div>
+                            <div onClick={()=>sortByName('already_paid')} className={css.all && css.course_format}>already_paid</div>
+                            <div onClick={()=>sortByName('group')} className={css.all && css.course_format}>group</div>
+                            <div onClick={()=>sortByName('created_at')} className={css.all && css.course_format}>created_at</div>
+                            <div onClick={()=>sortByName('manager')} className={css.all}>manager</div>
+                        </div>
+                        { loader
+                            ?<div className={css.boxLoader}><Loader/></div>
+                            :order === null
+                              ? orders.data && orders.data.map(order => <User orders={orders}  page={page} search={search} nameQur={name} key={order.id} order={order}/>)
 
+                              :order !== null && order.length >=0 && order.map(orde => <User ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
+                    </div>
 
                 </div>
 
