@@ -94,7 +94,7 @@ const Users = () => {
         }
         if (!searchByName){
 
-            setOrder(null);
+            // setOrder(null);
 
             setSearchByName(true);
 
