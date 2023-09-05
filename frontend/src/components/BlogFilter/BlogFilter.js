@@ -238,8 +238,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                         setData(data)
 
                         setOrderPage(data.totalPages)
-                        data.data.map(user=>
-                            setOrder(prev=> prev === null ? [user] : [...prev, user]))
+                        setOrder(data.data)
                     })
 
                     console.log(11)
@@ -255,8 +254,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                         setData(data)
 
                         setOrderPage(data.totalPages)
-                        data.data.map(user=>
-                            setOrder(prev=> prev === null ? [user] : [...prev, user]))
+                        setOrder(data.data)
                     })
                     console.log(12)
                 }
@@ -272,8 +270,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                     setData(data)
 
                     setOrderPage(data.totalPages)
-                    data.data.map(user=>
-                        setOrder(prev=> prev === null ? [user] : [...prev, user]))
+                    setOrder(data.data)
                 })
                 setSearchParams(params)
 
