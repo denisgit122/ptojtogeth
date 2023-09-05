@@ -281,7 +281,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
         }else {
 
             if (location.search && !pageQty ) {
-                if (name?.[1]!=='asc' && name?.[1]!=='desc'){
+                // if (name?.[1]!=='asc' && name?.[1]!=='desc'){
                     console.log(13)
                     // const page = location.search?.split('=')[1]?.split('&')[0] || 1;
 
@@ -298,21 +298,22 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
                     if (start_dateQuery?.length) params.startDate = start_dateQuery;
                     if (end_dateQuery?.length) params.endDate = end_dateQuery;
-
+                    const pages = location.search?.split('=')[1]?.split('&')[0] || 1;
+                    console.log(pages);
 
                     setOrderPage([]);
                     setOrder([]);
 
                     ordersService.getBySearch(
-                        page, params.name, params.surname, params.email, params.phone, params.age, params.course,
+                        pages, params.name, params.surname, params.email, params.phone, params.age, params.course,
                         params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
 
                     ).then(({data}) => {
-                        data.data.map(user=>
-                            setOrder(prev=> prev === null ? [user] : [...prev, user]))
+
+                            setOrder(data.data)
                     });
                     setPage(1);
-                }
+                // }
 
             }
 
@@ -338,7 +339,6 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
                 setOrderPage([]);
                 setOrder([]);
-                console.log("lox")
                 ordersService.getBySearch(
                     1, params.name, params.surname, params.email, params.phone, params.age, params.course,
                     params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
