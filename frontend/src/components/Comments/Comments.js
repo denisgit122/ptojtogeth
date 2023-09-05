@@ -13,6 +13,9 @@ const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
     const [comments, setComments] = useState('');
     const [modalActive, setModalActive] = useState(false);
 
+    const [user, setUser] = useState('');
+
+
     const {reset, handleSubmit, register} = useForm();
 
     const dispatch = useDispatch();
@@ -28,6 +31,11 @@ const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
     useEffect(() => {
         ordersService.getAllComments(id).then(({data})=> setComments(data))
     },[ id])
+
+    const update = async () => {
+        setModalActive(true);
+        await ordersService.getOneOrder(id).then(({data})=> setUser(data));
+    }
 
     return (
         <div className={css.headBoxComment}>
@@ -46,9 +54,8 @@ const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
                 </form>
             </div>
             <button
-                // disabled={order.manager !== null }
-                    onClick={() => setModalActive(true)} className={css.edit}>EDIT</button>
-            <UpdateUser page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} order={order} active={modalActive} setModalActive={setModalActive}/>
+                onClick={() =>  update()} className={css.edit}>EDIT</button>
+            <UpdateUser page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} order={user} active={modalActive} setModalActive={setModalActive}/>
 
         </div>
     );

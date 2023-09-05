@@ -16,6 +16,7 @@ const urlsOrders ={
         getAllComments:(id)=> `/orders/${id}/comments`,
         postComments:(id)=> `/orders/${id}/comment`,
         updateOrder:(id)=> `/orders/${id}`,
+        getOne:(id)=> `/orders/${id}`,
 
     }
 
