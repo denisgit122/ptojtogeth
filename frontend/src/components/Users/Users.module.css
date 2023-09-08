@@ -21,14 +21,14 @@ h3{
     width: 100%;
     margin-top: -1vw;
     padding-top: 2vw;
-    height: 8vw;
+    height: 100px;
     background: linear-gradient(#57606f, #2f3542);
 }
 .headBoxSearchOrder{
     width: 100%;
     margin-top: -1vw;
     padding-top: 2vw;
-    height: 15vw;
+    height: 180px;
     background: linear-gradient(#57606f, #2f3542);
 }
 .headBox{

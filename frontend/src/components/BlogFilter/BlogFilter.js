@@ -15,7 +15,6 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
     const location = useLocation();
 
 
-
     const [searchByName, setSearchByName] = useState(nameQuery);
     const [searchBySurname, setSearchBySurname] = useState(surnameQuery);
     const [searchByEmail, setSearchByEmail] = useState(emailQuery);
@@ -40,11 +39,25 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
     const [word, setWord] = useState();
     const [search, setSearch] = useState(true);
 
+
+    const [names, setNames] = useState(nameQuery);
+    const [Surname, setSurname] = useState(surnameQuery);
+    const [Email, setEmail] = useState(emailQuery);
+    const [Phone, setPhone] = useState(phoneQuery);
+    const [Age, setAge] = useState(ageQuery);
+
+
+
     if (resetForm === true){
         setTimeout(() =>{
             setOrder(null)
             setResetForm(false);
             setSearchByName('');
+            setNames('');
+            setSurname('');
+            setEmail('');
+            setPhone('');
+            setAge('');
             setSearchBySurname('');
             setSearchByEmail('');
             setSearchByPhone('');
@@ -61,7 +74,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
     }
     const params = {page};
-
+    console.log(searchByName)
 
     // const handleSubmit = (e) => {
     //     e.preventDefault();
@@ -207,8 +220,6 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
     }
 
     useEffect(() => {
-        console.log(search)
-        console.log(word)
         if (searchByName.length) params.name = searchByName;
         if (searchBySurname.length) params.surname = searchBySurname;
         if (searchByEmail.length) params.email = searchByEmail;
@@ -361,14 +372,14 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
     ])
     return (
         <div className={css.headForm}>
-            <form autoComplete='off' action="">
+            <form autoComplete='off' action=""  >
 
                 <div className={css.boxInpFirs}>
-                    <input className={css.input} type="search"  placeholder={'name'} name={'name'} value={searchByName} onChange={e => setSearchByName(e.target.value)}/>
-                    <input className={css.input} type="search"  placeholder={'surname'} name={'surname'} value={searchBySurname} onChange={e => setSearchBySurname(e.target.value)}/>
-                    <input className={css.input} type="search"  placeholder={'email'} name={'email'} value={searchByEmail} onChange={e => setSearchByEmail(e.target.value)}/>
-                    <input className={css.input} type="search"  placeholder={'phone'} name={'phone'} value={searchByPhone} onChange={e => setSearchByPhone(e.target.value)}/>
-                    <input className={css.inputAge} type="search"  placeholder={'age'} name={'age'} value={searchByAge} onChange={e => setSearchByAge(e.target.value)}/>
+                    <input className={css.input} type="search"  placeholder={'name'} value={names}  name={'name'} onChange={e => setNames(e.target.value)} onBlur={()=>setSearchByName(names)}/>
+                    <input className={css.input} type="search"  placeholder={'surname'} name={'surname'} value={Surname} onChange={e => setSurname(e.target.value)} onBlur={()=>setSearchBySurname(Surname)} />
+                    <input className={css.input} type="search"  placeholder={'email'} name={'email'} value={Email} onChange={e => setEmail(e.target.value)} onBlur={()=>setSearchByEmail(Email)}/>
+                    <input className={css.input} type="search"  placeholder={'phone'} name={'phone'} value={Phone} onChange={e => setPhone(e.target.value)} onBlur={()=>setSearchByPhone(Phone)}/>
+                    <input className={css.inputAge} type="search"  placeholder={'age'} name={'age'} value={Age} onChange={e => setAge(e.target.value)} onBlur={()=>setSearchByAge(Age)}/>
 
 
                     {!startDate

@@ -19,7 +19,7 @@ select{
 }
 .conteiner{
     width: 100vw;
-    margin-top: -2vw;
+    margin-top: -10px;
 
 }
 .boxLoader{
@@ -115,6 +115,7 @@ option{
 }
 
 .headBox{
+    margin-top: 5px;
     display: flex;
     width: 100%;
     height: 2.5vw;
