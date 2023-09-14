@@ -4,9 +4,10 @@ import {useEffect, useState} from "react";
 
 import {ordersAction} from "../../redux/slices/orders.slice";
 import {groupAction} from "../../redux/slices/group.slice";
-import {useLocation} from "react-router-dom";
+import {useLocation, useSearchParams} from "react-router-dom";
+import {ordersService} from "../../services";
 
-const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, setOrder, orders:orde, ord}) => {
+const UpdateUser = ({active, setModalActive, order,page, search, setOrder, orders:orde, ord, setOrderPage, setPage}) => {
 
     const {reset, register, setValue, formState:{isValid}} = useForm(
         {mode:"all"}
@@ -33,8 +34,43 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, s
     const [searchSum, setSearchSum] = useState(null);
     const [searchSurname, setSearchSurname] = useState(null);
 
-    useEffect(() => {
-        if (order){
+
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const nameQuery = searchParams.get('name') || '';
+    const surnameQuery = searchParams.get('surname') || '';
+    const emailQuery = searchParams.get('email') || '';
+    const phoneQuery = searchParams.get('phone') || '';
+    const ageQuery = searchParams.get('age') || '';
+    const courseQuery = searchParams.get('course') || '';
+    const course_formatQuery = searchParams.get('course_format') || '';
+    const course_typeQuery = searchParams.get('course_type') || '';
+    const statusQuery = searchParams.get('status') || '';
+    const groupsQuery = searchParams.get('groups') || '';
+
+    const start_dateQuery = searchParams.get('start_date') || '';
+    const end_dateQuery = searchParams.get('end_date') || '';
+
+    const params= {};
+
+
+
+        if (nameQuery.length) params.name = nameQuery;
+        if (surnameQuery.length) params.surname = surnameQuery;
+        if (emailQuery.length) params.email = emailQuery;
+        if (phoneQuery.length) params.phone = phoneQuery;
+        if (ageQuery.length) params.age = ageQuery;
+        if (courseQuery.length) params.course = courseQuery;
+        if (course_formatQuery.length) params.course_format = course_formatQuery;
+        if (course_typeQuery.length) params.course_type = course_typeQuery;
+        if (statusQuery.length) params.status = statusQuery;
+        if (groupsQuery.length) params.groups = groupsQuery;
+        //
+        if (start_dateQuery?.length >= 2) params.startDate = start_dateQuery;
+        if (end_dateQuery?.length >= 2) params.endDate = end_dateQuery;
+        console.log(params);
+        useEffect(() => {
+            if (order){
             setValue("email", order.email, {shouldValidate: true})
             setValue("name", order.name, {shouldValidate: true})
             setValue("surname", order.surname, {shouldValidate: true})
@@ -48,10 +84,12 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, s
             setValue("status", order.status, {shouldValidate: true} )
             setValue("course_type", order.course_type, {shouldValidate: true})
         }
-    },[order, setValue])
+    },[order, setValue, ageQuery])
 
     const dispatch = useDispatch();
     const user = {};
+
+
     const create = (e) =>{
         e.preventDefault();
 
@@ -82,23 +120,36 @@ const UpdateUser = ({active, setModalActive, order,page, nameQur:name, search, s
         if (queryStatus.length) user.status = queryStatus;
         if (querySum.length) user.sum = +querySum;
         if (querySurname.length) user.surname = querySurname;
-
-        if (name !== null){
-            if (name[1]==='asc' || name[1]==='desc'){
-                dispatch(ordersAction.updateOrder({id:order.id, value: user, page,query: `${name[0]}:${name[1]}`}))
-            }
-        }
-        else if (search){
+        console.log(params);
+         if (search){
+            console.log(2)
             dispatch(ordersAction.updateOrder({id: order.id, value: user, page, query:search}));
 
         }
-        else if (name === null && search === '') {
+        else if (search === '') {
+            console.log(params)
+            dispatch(ordersAction.updateOrder({id:order.id, value: user}));
+             ordersService.getBySearch(page, params.name, params.surname, params.email, params.phone, params.age, params.course,
+                 params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
 
-            dispatch(ordersAction.updateOrder({id:order.id, value: user, page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1) }));
-            dispatch(ordersAction.getAll({page: parseInt(location.search?.split('=')[1]?.split('&')[0] || 1)}))
+             ).then(({data})=>{
+                 setPage(data.page);
+                 setOrderPage(data.totalPages)
 
+                 setOrder(data.data);
+             })
             if (orde === undefined && ord.length){
-                setOrder(orders.data)
+
+                ordersService.getBySearch(page, params.name, params.surname, params.email, params.phone, params.age, params.course,
+                    params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
+
+                ).then(({data})=>{
+                    setPage(data.page);
+                    setOrderPage(data.totalPages)
+
+                    setOrder(data.data);
+                })
+                console.log(4)
 }
             // console.log(parseInt(location.search?.split('=')[1]?.split('&')[0]));
             }

@@ -7,7 +7,7 @@ import css from './BlogFilter.module.css'
 import {ordersService} from "../../services";
 
 
-const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPage, setResetForm, resetForm, start_dateQuery,
+const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, setResetForm, resetForm, start_dateQuery,
                         page, setSearchParams,nameQuery,surnameQuery, emailQuery, phoneQuery, ageQuery, end_dateQuery,
                         courseQuery, course_formatQuery, course_typeQuery, statusQuery, groupsQuery}) => {
 
@@ -105,10 +105,10 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
         if (searchByStart_date?.length >= 2) params.startDate = searchByStart_date;
         if (searchByEnd_date?.length >= 2) params.endDate = searchByEnd_date;
         if (pageQty){
+
             if (word){
 
                 if (search){
-
                     setOrderPage([]);
                     setOrder([]);
                     params.sortBy =  `${word} desc`
@@ -142,6 +142,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                 }
                 setSearchParams(params)
             }else {
+
                 setOrderPage([]);
                 setOrder([]);
 
@@ -157,7 +158,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                 setSearchParams(params)
 
             }
-        }else {
+        } else {
 
             if (location.search && !pageQty ) {
                 // if (name?.[1]!=='asc' && name?.[1]!=='desc'){
@@ -178,7 +179,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                     if (start_dateQuery?.length) params.startDate = start_dateQuery;
                     if (end_dateQuery?.length) params.endDate = end_dateQuery;
                     const pages = location.search?.split('=')[1]?.split('&')[0] || 1;
-                    console.log(pages);
+
 
                     setOrderPage([]);
                     setOrder([]);
@@ -188,10 +189,13 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
                         params.course_format, params.course_type, params.status, params.groups, params.startDate, params.endDate
 
                     ).then(({data}) => {
-
+                        console.log(data)
+                        setOrderPage(data.totalPages)
+                        setPage(data.page)
                             setOrder(data.data)
                     });
-                    setPage(1);
+
+                    // setPage(1);
                 // }
 
             }
@@ -241,6 +245,7 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
         search,setSearch
 
     ])
+    console.log(order);
     return (
         <div className={css.headForm}>
             <form autoComplete='off' action=""  >
@@ -314,7 +319,31 @@ const BlogFilter = ({name, setOrder,setOrderPage, pageQty,order,orderPage, setPa
 
             </form>
             {order === null || Math.ceil(+orderPage.length/25)<=0
-                ? <div></div>
+                ?
+                <Container>
+                                    <Stack spacing={2}>
+                                        {
+                                            !!pageQty && (<Pagination
+                                                sx={{marginY:3, marginX: "auto"}}
+                                                count={pageQty}
+                                                page={page}
+                                                showFirstButton
+                                                showLastButton
+                                                onChange={(_, num) => setPage(num)}
+                                                renderItem={
+                                                    (item) =>(
+                                                        <PaginationItem
+                                                            component={Link}
+                                                            to={`/orders?page=${item.page}`}
+                                                            {...item}
+                                                        />
+                                                    )
+                                                }
+                                            />)
+                                        }
+
+                                    </Stack>
+                                </Container>
 
                 :
                 <div className={css.conteiner}>

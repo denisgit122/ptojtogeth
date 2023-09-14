@@ -144,7 +144,6 @@ const Users = () => {
                     <div className={order === null? css.headBoxSearch : css.headBoxSearchOrder}>
                         <BlogFilter
                             searchByName={searchByName}
-                            name={name}
                             start_dateQuery={start_dateQuery}
                             end_dateQuery={end_dateQuery}
                             setResetForm={setResetForm}
@@ -172,44 +171,15 @@ const Users = () => {
                         />
 
                     </div>
-                    {order === null
-                        ? loader
-                            ?<div className={css.boxLoader}><Loader/></div>
-                            : <div className={css.conteiner}>
-                                <Container>
-                                    <Stack spacing={2}>
-                                        {
-                                            !!pageQty && (<Pagination
-                                                sx={{marginY:3, marginX: "auto"}}
-                                                count={pageQty}
-                                                page={page}
-                                                showFirstButton
-                                                showLastButton
-                                                onChange={(_, num) => setPage(num)}
-                                                renderItem={
-                                                    (item) =>(
-                                                        <PaginationItem
-                                                            component={Link}
-                                                            to={`/orders?page=${item.page}`}
-                                                            {...item}
-                                                        />
-                                                    )
-                                                }
-                                            />)
-                                        }
-
-                                    </Stack>
-                                </Container>
-                            </div>
-
-                        :<div></div>}
                     <div >
                         { loader
                             ?<div className={css.boxLoader}><Loader/></div>
                             :order === null
-                                ? orders.data && orders.data.map(order => <User orders={orders}  page={page} search={search} nameQur={name} key={order.id} order={order}/>)
+                                ? orders.data && orders.data.map(order => <User orders={orders}  setOrderPage={setOrderPage} setPage={setPage}                            setOrder={setOrder}
+                                                                                page={page} search={search} nameQur={name} key={order.id} order={order}/>)
 
-                                :order !== null && order.length >=0 && order.map(orde => <User ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
+                                :order !== null && order.length >=0 && order.map(orde => <User setOrderPage={setOrderPage} setPage={setPage}
+                                ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
                     </div>
 
                 </div>

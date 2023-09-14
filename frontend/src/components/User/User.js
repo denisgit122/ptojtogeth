@@ -3,7 +3,7 @@ import {useState} from "react";
 import css from './User.module.css'
 import {Comments} from "../Comments/Comments";
 
-const User = ({page, nameQur,order, search, ord, setOrder, orders}) => {
+const User = ({page, nameQur,order, search, ord, setOrder, orders, setPage, setOrderPage}) => {
     const
         {id,name, surname, email, phone, age, course, course_format, course_type, status, sum, already_paid,
             group, created_at, manager} = order;
@@ -62,7 +62,7 @@ const User = ({page, nameQur,order, search, ord, setOrder, orders}) => {
                 active
                     ?<div></div>
                     : <div className={css.commentBox}>
-                        <Comments page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} key={id} order={order} id={id}/>
+                        <Comments setOrderPage={setOrderPage} setPage={setPage} page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} key={id} order={order} id={id}/>
                     </div>
             }
         </div>

@@ -23,10 +23,10 @@ const getAll = createAsyncThunk (
 );
 const updateOrder = createAsyncThunk (
     "carSlice/updateOrder",
-    async ({id, value, page, query}, thunkAPI)=>{
+    async ({id, value}, thunkAPI)=>{
         try {
             const {data} = await ordersService.updateOrder(id, value);
-            thunkAPI.dispatch(getAll({page, query}))
+            // thunkAPI.dispatch(getAll({page, query}))
             return data
         }catch (e) {
             return thunkAPI.rejectWithValue(e.response.data);

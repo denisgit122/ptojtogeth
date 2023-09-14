@@ -8,7 +8,7 @@ import {ordersService} from "../../services";
 import {ordersAction} from "../../redux/slices/orders.slice";
 import {UpdateUser} from "../UpdateUser/UpdateUser";
 
-const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
+const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders,setOrderPage, setPage}) => {
 
     const [comments, setComments] = useState('');
     const [modalActive, setModalActive] = useState(false);
@@ -21,11 +21,11 @@ const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
     const dispatch = useDispatch();
 
     const submit = async (data) => {
-
+        reset();
         await dispatch(ordersAction.postComments({id: id, comment: data, page}));
 
         ordersService.getAllComments(id).then(({data})=> setComments(data))
-        reset();
+
     }
 
     useEffect(() => {
@@ -55,7 +55,7 @@ const Comments = ({page, id,search, order, nameQur, ord, setOrder, orders}) => {
             </div>
             <button
                 onClick={() =>  update()} className={css.edit}>EDIT</button>
-            <UpdateUser page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} order={user} active={modalActive} setModalActive={setModalActive}/>
+            <UpdateUser setOrderPage={setOrderPage} setPage={setPage} page={page} ord={ord} setOrder={setOrder} orders={orders} search={search} nameQur={nameQur} order={user} active={modalActive} setModalActive={setModalActive}/>
 
         </div>
     );
