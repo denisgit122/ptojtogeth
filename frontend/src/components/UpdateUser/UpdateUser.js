@@ -15,9 +15,6 @@ const UpdateUser = ({active, setModalActive, order,page, search, setOrder, order
     );
     const {groups} = useSelector(state => state.groups);
 
-    const location = useLocation()
-    const {orders} = useSelector(state => state.orders);
-
     const [activeGroup, setActiveGroup] = useState(true);
     const [groupValue, setGroupValue] = useState('');
 
@@ -68,7 +65,7 @@ const UpdateUser = ({active, setModalActive, order,page, search, setOrder, order
         //
         if (start_dateQuery?.length >= 2) params.startDate = start_dateQuery;
         if (end_dateQuery?.length >= 2) params.endDate = end_dateQuery;
-        console.log(params);
+
         useEffect(() => {
             if (order){
             setValue("email", order.email, {shouldValidate: true})
@@ -122,7 +119,7 @@ const UpdateUser = ({active, setModalActive, order,page, search, setOrder, order
         if (querySurname.length) user.surname = querySurname;
         console.log(params);
          if (search){
-            console.log(2)
+
             dispatch(ordersAction.updateOrder({id: order.id, value: user, page, query:search}));
 
         }
@@ -153,6 +150,7 @@ const UpdateUser = ({active, setModalActive, order,page, search, setOrder, order
 }
             // console.log(parseInt(location.search?.split('=')[1]?.split('&')[0]));
             }
+        setModalActive(false)
         // console.log(user);
     };
     const output = () => {

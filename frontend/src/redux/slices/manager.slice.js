@@ -5,6 +5,7 @@ import {managerService} from "../../services";
 
 let initialState = {
     managers: [],
+    managerStatistic:[],
     errors: null,
     loading: null
 };
@@ -14,6 +15,19 @@ const getManagers = createAsyncThunk(
     async ({page}, thunkAPI)=>{
         try {
             const {data} = await managerService.getAll(page);
+            return data;
+        }catch (e) {
+            return thunkAPI.rejectWithValue(e.response.data);
+
+        }
+    }
+
+)
+const getManagersStatistic = createAsyncThunk(
+    "managerSlice/getManagersStatistic",
+    async (id, thunkAPI)=>{
+        try {
+            const {data} = await managerService.getStatistic(id);
             return data;
         }catch (e) {
             return thunkAPI.rejectWithValue(e.response.data);
@@ -57,6 +71,9 @@ const managerSlice = createSlice({
         extraReducers: {
             [getManagers.fulfilled]: (state, action)=> {
                 state.managers = action.payload
+            },
+            [getManagersStatistic.fulfilled]: (state, action)=> {
+                state.managerStatistic = action.payload
             }
         }
     },
@@ -68,6 +85,7 @@ const managerAction = {
     getManagers,
     createManager,
     updateManager,
+    getManagersStatistic
 }
 export {
     managerReducer,

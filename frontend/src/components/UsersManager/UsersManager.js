@@ -15,6 +15,7 @@ const UsersManager = () => {
 
     const location = useLocation();
 
+
     const [page, setPage] = useState(parseInt(location.search?.split('=')[1]?.split('&')[0] || 1));
     const [name, setName] = useState( location.search?.split('=')[2]?.split('+') || null)
 
@@ -60,27 +61,6 @@ const UsersManager = () => {
 
         setTimeout(()=>setLoader(false), 1000);
 
-
-
-        // if (search !== ''){
-        //
-        //     dispatch(ordersAction.getAll({page, query: search}));
-        //     const arg = search.split(':');
-        //
-        //     setSearchParams({page, sortBy: `${arg[0]} ${arg[1]}`});
-        //
-        //
-        // }else if(name !== null){
-        //
-        //     if (name[1]==='asc' || name[1]==='desc'){
-        //
-        //         dispatch(ordersAction.getAll({page, query: `${name[0]}:${name[1]}` }));
-        //         setSearchParams({page, sortBy: `${name[0]} ${name[1]}`});
-        //
-        //     }
-        //
-        // }
-        // else
         if (order === null){
 
             dispatch(ordersAction.getAll({page}));
@@ -88,38 +68,6 @@ const UsersManager = () => {
         }
 
     }, [dispatch, orders.limit, orders.totalPages, page])
-
-    // const sortByName = async (word) => {
-    //     //
-    //     // if (searchByName|| !searchByName){
-    //     //     setPage(1);
-    //     // }
-    //     // if (!searchByName){
-    //     //
-    //     //     // setOrder(null);
-    //     //
-    //     //     setSearchByName(true);
-    //     //
-    //          dispatch(ordersAction.getAll({page, query: `${word}:asc` }));
-    //     //
-    //     //     setSearch(`${word}:asc`);
-    //     //
-    //     //     setSearchParams({page, sortBy: `${word} asc` });
-    //     //
-    //     // }else {
-    //     //
-    //     //     setSearchParams({page, sortBy: `${word} desc`});
-    //     //
-    //     //     setSearch(`${word}:desc`);
-    //     //
-    //     //     dispatch(ordersAction.getAll({page, query: `${word}:desc` }));
-    //     //
-    //     //     setSearchByName(false);
-    //     //     setOrder(null);
-    //     //
-    //     // }
-    //
-    // };
 
     const reset = async () => {
         setPage(1)
@@ -134,17 +82,45 @@ const UsersManager = () => {
 
         setResetForm(true);
     }
+
+//
+//
+// const handleOrdersONExcel = () => {
+//
+//     const wb = utils.book_new();
+//     const ws = utils.json_to_sheet(orders.data);
+//
+//     utils.book_append_sheet(wb, ws, 'My file');
+//
+//     writeFile(wb, "MyExcel.xlsx")
+// }
+//     const handleOrderONExcel = () => {
+//
+//         const wb = utils.book_new();
+//         const ws = utils.json_to_sheet(orders.data);
+//
+//         utils.book_append_sheet(wb, ws, 'My file');
+//
+//         writeFile(wb, "MyExcel.xlsx")
+//     }
     return (
         <div className={css.box}>
+
             <div className={css.usersBox}>
                 <div className={css.pagin}>
+                    <div>
 
+                        {/*{order*/}
+                        {/*    ?  <button onClick={()=>handleOrdersONExcel()}></button>*/}
+                        {/*    :  <button onClick={()=>handleOrderONExcel()}></button>*/}
+                        {/*}*/}
+
+
+                    </div>
                     <div className={css.boxBiReset} onClick={()=>reset()}><BiReset className={css.BiReset}/></div>
-
                     <div className={order === null? css.headBoxSearch : css.headBoxSearchOrder}>
                         <BlogFilter
                             searchByName={searchByName}
-                            name={name}
                             start_dateQuery={start_dateQuery}
                             end_dateQuery={end_dateQuery}
                             setResetForm={setResetForm}
@@ -172,45 +148,15 @@ const UsersManager = () => {
                         />
 
                     </div>
-                    {order === null
-                        ? loader
-                            ?<div className={css.boxLoader}><Loader/></div>
-                            : <div className={css.conteiner}>
-                                <Container>
-                                    <Stack spacing={2}>
-                                        {
-                                            !!pageQty && (<Pagination
-                                                sx={{marginY:3, marginX: "auto"}}
-                                                count={pageQty}
-                                                page={page}
-                                                showFirstButton
-                                                showLastButton
-                                                onChange={(_, num) => setPage(num)}
-                                                renderItem={
-                                                    (item) =>(
-                                                        <PaginationItem
-                                                            component={Link}
-                                                            to={`/manager?page=${item.page}`}
-
-                                                            {...item}
-                                                        />
-                                                    )
-                                                }
-                                            />)
-                                        }
-
-                                    </Stack>
-                                </Container>
-                            </div>
-
-                        :<div></div>}
                     <div >
                         { loader
                             ?<div className={css.boxLoader}><Loader/></div>
                             :order === null
-                                ? orders.data && orders.data.map(order => <User orders={orders}  page={page} search={search} nameQur={name} key={order.id} order={order}/>)
+                                ? orders.data && orders.data.map(order => <User orders={orders}  setOrderPage={setOrderPage} setPage={setPage}                            setOrder={setOrder}
+                                                                                page={page} search={search} nameQur={name} key={order.id} order={order}/>)
 
-                                :order !== null && order.length >=0 && order.map(orde => <User ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
+                                :order !== null && order.length >=0 && order.map(orde => <User setOrderPage={setOrderPage} setPage={setPage}
+                                                                                               ord={order} setOrder={setOrder} page={page} search={search} nameQur={name} key={orde.id} order={orde}/>)}
                     </div>
 
                 </div>

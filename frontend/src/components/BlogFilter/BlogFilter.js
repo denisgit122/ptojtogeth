@@ -320,6 +320,8 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
             </form>
             {order === null || Math.ceil(+orderPage.length/25)<=0
                 ?
+                <div className={css.conteiner}>
+
                 <Container>
                                     <Stack spacing={2}>
                                         {
@@ -334,7 +336,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
                                                     (item) =>(
                                                         <PaginationItem
                                                             component={Link}
-                                                            to={`/orders?page=${item.page}`}
+                                                            to={`/${manager === "manager" ? "manager": "orders"}?page=${item.page}`}
                                                             {...item}
                                                         />
                                                     )
@@ -344,6 +346,7 @@ const BlogFilter = ({ setOrder,setOrderPage, pageQty,order,orderPage, setPage, s
 
                                     </Stack>
                                 </Container>
+                </div>
 
                 :
                 <div className={css.conteiner}>

@@ -30,6 +30,8 @@ const urlsGroup = {
 const urlsManager = {
     manager:{
         gerAll: '/managers',
+        getStatistic:(id) => `/managers/${id}/statistic`,
+
         create: '/managers/create',
         update:(id)=> `/managers/${id}`,
         getByToken: `/managers/token`

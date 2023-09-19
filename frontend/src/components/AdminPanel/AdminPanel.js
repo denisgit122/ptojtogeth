@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {useDispatch} from "react-redux";
+import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 
 import css from './AdminPanel.module.css';
 import {ManagerDescription} from "../Admin/ManagerDescription/ManagerDescription";
@@ -13,6 +13,12 @@ const AdminPanel = ({manager}) => {
     const [cop, setCoty] = useState(false);
 
     const dispatch = useDispatch();
+    const {managerStatistic} = useSelector(state => state.managers);
+
+
+    useEffect(() => {
+        dispatch(managerAction.getManagersStatistic(manager.id))
+    },[])
 
     const addPassword = () => {
         if (manager.is_active === false) {
@@ -51,7 +57,7 @@ const AdminPanel = ({manager}) => {
             {active
                 ?
                 <div className={css.box }>
-                    <ManagerDescription manager={manager}/>
+                    <ManagerDescription managerStatistic={managerStatistic} manager={manager}/>
                     <div className={css.lie}></div>
                     <ButtonAdmin active={active} setActive={setActive} word={'Learn more...'}/>
 
@@ -59,7 +65,7 @@ const AdminPanel = ({manager}) => {
                 :
                 <div className={css.boxFalse}>
 
-                    <ManagerDescription manager={manager}/>
+                    <ManagerDescription managerStatistic={managerStatistic} manager={manager}/>
                     <div className={css.lieFalse}></div>
 
                     <div className={css.boxButton}>

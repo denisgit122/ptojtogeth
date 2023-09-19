@@ -1,6 +1,5 @@
-import {Container, Pagination, Stack, PaginationItem} from '@mui/material'
 import {useEffect, useState} from "react";
-import {Link, useLocation, useSearchParams} from 'react-router-dom';
+import { useLocation, useSearchParams} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import {BiReset} from 'react-icons/bi'
 
@@ -14,6 +13,7 @@ import {Loader} from "../Loader/Loader";
 const Users = () => {
 
     const location = useLocation();
+
 
     const [page, setPage] = useState(parseInt(location.search?.split('=')[1]?.split('&')[0] || 1));
     const [name, setName] = useState( location.search?.split('=')[2]?.split('+') || null)
@@ -60,27 +60,6 @@ const Users = () => {
 
         setTimeout(()=>setLoader(false), 1000);
 
-
-
-        // if (search !== ''){
-        //
-        //     dispatch(ordersAction.getAll({page, query: search}));
-        //     const arg = search.split(':');
-        //
-        //     setSearchParams({page, sortBy: `${arg[0]} ${arg[1]}`});
-        //
-        //
-        // }else if(name !== null){
-        //
-        //     if (name[1]==='asc' || name[1]==='desc'){
-        //
-        //         dispatch(ordersAction.getAll({page, query: `${name[0]}:${name[1]}` }));
-        //         setSearchParams({page, sortBy: `${name[0]} ${name[1]}`});
-        //
-        //     }
-        //
-        // }
-        // else
         if (order === null){
 
             dispatch(ordersAction.getAll({page}));
@@ -88,38 +67,6 @@ const Users = () => {
         }
 
     }, [dispatch, orders.limit, orders.totalPages, page])
-
-    // const sortByName = async (word) => {
-    //     //
-    //     // if (searchByName|| !searchByName){
-    //     //     setPage(1);
-    //     // }
-    //     // if (!searchByName){
-    //     //
-    //     //     // setOrder(null);
-    //     //
-    //     //     setSearchByName(true);
-    //     //
-    //          dispatch(ordersAction.getAll({page, query: `${word}:asc` }));
-    //     //
-    //     //     setSearch(`${word}:asc`);
-    //     //
-    //     //     setSearchParams({page, sortBy: `${word} asc` });
-    //     //
-    //     // }else {
-    //     //
-    //     //     setSearchParams({page, sortBy: `${word} desc`});
-    //     //
-    //     //     setSearch(`${word}:desc`);
-    //     //
-    //     //     dispatch(ordersAction.getAll({page, query: `${word}:desc` }));
-    //     //
-    //     //     setSearchByName(false);
-    //     //     setOrder(null);
-    //     //
-    //     // }
-    //
-    // };
 
     const reset = async () => {
         setPage(1)
@@ -134,13 +81,42 @@ const Users = () => {
 
         setResetForm(true);
     }
+
+//
+//
+// const handleOrdersONExcel = () => {
+//
+//     const wb = utils.book_new();
+//     const ws = utils.json_to_sheet(orders.data);
+//
+//     utils.book_append_sheet(wb, ws, 'My file');
+//
+//     writeFile(wb, "MyExcel.xlsx")
+// }
+//     const handleOrderONExcel = () => {
+//
+//         const wb = utils.book_new();
+//         const ws = utils.json_to_sheet(orders.data);
+//
+//         utils.book_append_sheet(wb, ws, 'My file');
+//
+//         writeFile(wb, "MyExcel.xlsx")
+//     }
     return (
         <div className={css.box}>
+
             <div className={css.usersBox}>
                 <div className={css.pagin}>
+<div>
 
+    {/*{order*/}
+    {/*    ?  <button onClick={()=>handleOrdersONExcel()}></button>*/}
+    {/*    :  <button onClick={()=>handleOrderONExcel()}></button>*/}
+    {/*}*/}
+
+
+</div>
                     <div className={css.boxBiReset} onClick={()=>reset()}><BiReset className={css.BiReset}/></div>
-
                     <div className={order === null? css.headBoxSearch : css.headBoxSearchOrder}>
                         <BlogFilter
                             searchByName={searchByName}

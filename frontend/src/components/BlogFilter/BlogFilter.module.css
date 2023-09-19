@@ -18,8 +18,9 @@ select{
     font-size: 1.5vw;
 }
 .conteiner{
-    width: 100vw;
-    margin-top: -10px;
+    /*width: 100vw;*/
+    margin-top: 10px;
+    margin-left: 29vw;
 
 }
 .boxLoader{
@@ -115,7 +116,7 @@ option{
 }
 @media (max-width: 1350px) {
     .headBox{
-        margin-top: 5px;
+        top: 30px;
         display: flex;
         width: 100%;
         height: 2.5vw;
@@ -125,7 +126,7 @@ option{
 }
 @media (max-width: 1650px) {
     .headBox{
-        margin-top: -10px;
+        margin-top: 10px;
         margin-bottom: 2vw;
         display: flex;
         width: 100%;
