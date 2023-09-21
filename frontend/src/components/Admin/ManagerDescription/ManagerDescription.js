@@ -2,7 +2,7 @@ import css from "../../AdminPanel/AdminPanel.module.css";
 
 const ManagerDescription = ({manager, managerStatistic}) => {
     const {email, name, surname, last_login, status} = manager;
-    const {total,inWork, agree}= managerStatistic
+
     let strings = '';
     let login = '';
     let loginDay = '';
@@ -23,9 +23,14 @@ const ManagerDescription = ({manager, managerStatistic}) => {
                 <div className={css.span}>name: {name}</div>
                 <div className={css.span}>surname: {surname}</div>
                 <div className={css.span}>status: {status}</div>
-                <div className={css.span}>total: {total}</div>
-                <div className={css.span}>Agree: {agree}</div>
-                <div className={css.span}>In work: {inWork}</div>
+                <div className={css.span}>total: {managerStatistic?.total}</div>
+                {
+                    managerStatistic?.agree>=1 && <div className={css.span}>Agree: {managerStatistic?.agree}</div>
+                }
+                {
+                    managerStatistic?.inWork>=1 && <div className={css.span}>In work: {managerStatistic?.inWork}</div>
+                }
+
 
                 <div className={css.span}>last_login: {
                     last_login===null

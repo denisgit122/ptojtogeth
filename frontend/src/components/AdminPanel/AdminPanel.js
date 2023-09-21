@@ -6,6 +6,7 @@ import {ManagerDescription} from "../Admin/ManagerDescription/ManagerDescription
 import {ButtonAdmin} from "../Admin/ButtonAdmin/ButtonAdmin";
 import {managerAction} from "../../redux/slices/manager.slice";
 import {authAction} from "../../redux/slices/auth.slice";
+import {managerService} from "../../services";
 
 const AdminPanel = ({manager}) => {
 
@@ -13,12 +14,13 @@ const AdminPanel = ({manager}) => {
     const [cop, setCoty] = useState(false);
 
     const dispatch = useDispatch();
-    const {managerStatistic} = useSelector(state => state.managers);
-
+    // const {managerStatistic} = useSelector(state => state.managers);
+const [statistic, setStatistic] = useState();
 
     useEffect(() => {
-        dispatch(managerAction.getManagersStatistic(manager.id))
-    },[])
+        // dispatch(managerAction.getManagersStatistic(manager.id))
+        managerService.getStatistic(manager.id).then(({data})=> setStatistic(data))
+    },[manager]);
 
     const addPassword = () => {
         if (manager.is_active === false) {
@@ -57,7 +59,7 @@ const AdminPanel = ({manager}) => {
             {active
                 ?
                 <div className={css.box }>
-                    <ManagerDescription managerStatistic={managerStatistic} manager={manager}/>
+                    <ManagerDescription managerStatistic={statistic} manager={manager}/>
                     <div className={css.lie}></div>
                     <ButtonAdmin active={active} setActive={setActive} word={'Learn more...'}/>
 
@@ -65,7 +67,7 @@ const AdminPanel = ({manager}) => {
                 :
                 <div className={css.boxFalse}>
 
-                    <ManagerDescription managerStatistic={managerStatistic} manager={manager}/>
+                    <ManagerDescription managerStatistic={statistic} manager={manager}/>
                     <div className={css.lieFalse}></div>
 
                     <div className={css.boxButton}>
