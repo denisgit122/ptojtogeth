@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 
 import css from './AdminPanel.module.css';
 import {ManagerDescription} from "../Admin/ManagerDescription/ManagerDescription";
@@ -8,21 +8,34 @@ import {managerAction} from "../../redux/slices/manager.slice";
 import {authAction} from "../../redux/slices/auth.slice";
 import {managerService} from "../../services";
 
-const AdminPanel = ({manager}) => {
+const AdminPanel = ({manager, setTotal,setInWork, setAgree}) => {
 
     const [active, setActive] = useState(true);
     const [cop, setCoty] = useState(false);
 
     const dispatch = useDispatch();
-    // const {managerStatistic} = useSelector(state => state.managers);
-const [statistic, setStatistic] = useState();
+
+    const [statistic, setStatistic] = useState();
 
     useEffect(() => {
-        // dispatch(managerAction.getManagersStatistic(manager.id))
-        managerService.getStatistic(manager.id).then(({data})=> setStatistic(data))
+
+        managerService.getStatistic(manager.id).then(({data})=> {
+
+            if (data?.total>=1){
+                setTotal(prev=> prev === undefined ? data.total : prev + data.total)
+            }
+            if (data?.inWork>=1){
+                setInWork(prev=> prev === undefined ? data.inWork : prev + data.inWork)
+            }
+            if (data?.agree>=1){
+                setAgree(prev=> prev === undefined ? data.agree : prev + data.agree)
+            }
+            setStatistic(data)
+        })
     },[manager]);
 
     const addPassword = () => {
+
         if (manager.is_active === false) {
             dispatch(authAction.addPassword({email: manager.email}))
             alert('We have send you a confirmation email');
@@ -35,6 +48,11 @@ const [statistic, setStatistic] = useState();
         }
     }
     const ban = () => {
+
+        setAgree(undefined);
+        setTotal(undefined);
+        setInWork(undefined);
+
         if (manager.status === "unbanned"){
 
             dispatch(managerAction.updateManager({id: manager.id, manager: {status: "banned", is_active: true}, page:1}))
@@ -43,6 +61,11 @@ const [statistic, setStatistic] = useState();
     };
 
     const unban = () => {
+
+        setAgree(undefined);
+        setTotal(undefined);
+        setInWork(undefined);
+
         if (manager.status === "banned"){
 
             dispatch(managerAction.updateManager({id: manager.id, manager: {status: "unbanned", is_active: false}, page:1}))
@@ -50,6 +73,7 @@ const [statistic, setStatistic] = useState();
 
     };
     const forgotPass = () => {
+
         dispatch(authAction.forgotPassword({email: manager.email}))
         alert('We have send you a confirmation email');
     }
